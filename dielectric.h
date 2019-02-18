@@ -11,7 +11,7 @@ bool refract(const vec3& v, const vec3& normal, float ni_over_nt, vec3& refracte
     float discriminant = 1.0f - ni_over_nt * ni_over_nt * (1.0f - dt * dt);
     if (discriminant > 0.0f)
     {
-        refracted = ni_over_nt * (uv - normal * dt) - normal * std::sqrtf(discriminant);
+        refracted = ni_over_nt * (uv - normal * dt) - normal * sqrtf(discriminant);
         ret = true;
     }
     return ret;
@@ -21,7 +21,7 @@ float schlick(const float cosine, const float reflective_index)
 {
     float r0 = (1 - reflective_index) / (1 + reflective_index);
     r0 = r0 * r0;
-    return r0 + (1 - r0) * std::powf((1 - cosine), 5);
+    return r0 + (1 - r0) * powf((1 - cosine), 5);
 }
 
 class dielectric : public material

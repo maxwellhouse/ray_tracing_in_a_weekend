@@ -15,8 +15,8 @@ public:
     inline bool hit(const ray& r, const float t_min, const float t_max, hit_record& rec) const override;
 
 private:
-    float time0, time1;
     vec3 center0, center1;
+    float time0, time1;
     vec3 center;
     float radius;
     material* pMaterial;
@@ -44,7 +44,7 @@ bool moving_sphere::hit(const ray& r, const float t_min, const float t_max, hit_
 
     if (discriminant > 0)
     {
-        float temp = (-b - std::sqrtf(discriminant)) / a;
+        float temp = (-b - sqrtf(discriminant)) / a;
         if (temp < t_max && temp > t_min)
         {
             rec.t = temp;
@@ -55,7 +55,7 @@ bool moving_sphere::hit(const ray& r, const float t_min, const float t_max, hit_
         }
         else
         {
-            temp = (-b + std::sqrtf(discriminant) / a);
+            temp = (-b + sqrtf(discriminant) / a);
             if (temp < t_max && temp > t_min)
             {
                 rec.t = temp;

@@ -1,7 +1,6 @@
 #define STB_IMAGE_WRITE_IMPLEMENTATION
 #include <stb/stb_image_write.h>
 
-#define _USE_MATH_DEFINES
 #include <cmath>
 
 #include "vec3.h"
@@ -99,8 +98,8 @@ void make_world(std::vector<object*>& obj_list)
 
 int main()
 {
-    const int width = 1200;
-    const int height = 800;
+    const int width = 800;
+    const int height = 600;
     const int ns = 10;
     int comp = 3;
     std::vector<uint8_t> image;
@@ -126,6 +125,7 @@ int main()
 
     for(int j = height-1; j >= 0; j--)
     {
+        std::cout << j << "\n";
         for(int i = 0; i < width; i++)
         {
             vec3 color(0.0f, 0.0f, 0.0f);
@@ -137,9 +137,8 @@ int main()
 
                 color += linear_interp_color(r, obj_list, 0);
             }
-            //std::cout << i << ":" << j << "\n";
             color /= float(ns);
-            color = vec3(std::sqrtf(color[0]), std::sqrtf(color[1]), std::sqrtf(color[2]));
+            color = vec3(sqrtf(color[0]), sqrtf(color[1]), sqrtf(color[2]));
             uint8_t ir = uint8_t(255.99*color.r());
             uint8_t ig = uint8_t(255.99*color.g());
             uint8_t ib = uint8_t(255.99*color.b());

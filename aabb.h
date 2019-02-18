@@ -37,7 +37,7 @@ bool aabb::hit(const ray& r, const float tMin, const float tMax) const
 
         float min = ffmax(t0, tMin);
         float max = ffmin(t1, tMax);
-        if (tMax <= tMin)
+        if (max <= min)
         {
             return true;
         }
