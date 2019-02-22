@@ -1,7 +1,6 @@
 #pragma once
-
-
 #include "material.h"
+#include "texture.h"
 
 vec3 random_in_unit_sphere()
 {
@@ -16,15 +15,15 @@ vec3 random_in_unit_sphere()
 class Lambertian : public material
 {
 public:
-    Lambertian(const vec3& v): albedo(v) { }
+    Lambertian(texture* tex): albedo(tex) { }
     bool scatter(const ray& ray_in, const hit_record& rec, vec3& attenuation, ray& scattered) const override
     {
         vec3 target = rec.p + rec.normal + random_in_unit_sphere();
         scattered = ray(rec.p, target - rec.p, ray_in.time());
-        attenuation = albedo;
+        attenuation = albedo->value(0,0,rec.p);
         return true;
     }
 
 private:
-    vec3 albedo;
+    texture* albedo;
 };

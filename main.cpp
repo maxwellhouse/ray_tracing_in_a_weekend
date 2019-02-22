@@ -11,6 +11,8 @@
 #include "lambertian.h"
 #include "metal.h"
 #include "dielectric.h"
+#include "constant_texture.h"
+#include "checker_texture.h"
 
 #include <iostream>
 
@@ -42,7 +44,7 @@ object* make_random_world()
     int i = 0;
     int num_objects = 11;
     object** pList = new object*[482];
-    pList[i++] = new sphere(vec3(0, -1000, 0), 1000, new Lambertian(vec3(0.5f, 0.5f, 0.5f)));
+    pList[i++] = new sphere(vec3(0, -1000, 0), 1000, new Lambertian(new constant_texture(vec3(0.5f, 0.5f, 0.5f))));
 
     for (int a = -num_objects; a < num_objects; a++)
     {
@@ -58,7 +60,7 @@ object* make_random_world()
                     {
                         pList[i++] = new sphere(center,
                                         0.2f,
-                                        new Lambertian(vec3(math::distribution(math::random_number)*math::distribution(math::random_number), math::distribution(math::random_number)*math::distribution(math::random_number), math::distribution(math::random_number)*math::distribution(math::random_number))));
+                            new Lambertian(new constant_texture(vec3(math::distribution(math::random_number) * math::distribution(math::random_number), math::distribution(math::random_number) * math::distribution(math::random_number), math::distribution(math::random_number) * math::distribution(math::random_number)))));
                     }
                     else
                     {
@@ -67,7 +69,7 @@ object* make_random_world()
                             0.0f,
                             1.0f,
                             0.2f,
-                            new Lambertian(vec3(math::distribution(math::random_number)*math::distribution(math::random_number), math::distribution(math::random_number)*math::distribution(math::random_number), math::distribution(math::random_number)*math::distribution(math::random_number))));
+                            new Lambertian(new constant_texture(vec3(math::distribution(math::random_number)*math::distribution(math::random_number), math::distribution(math::random_number)*math::distribution(math::random_number), math::distribution(math::random_number)*math::distribution(math::random_number)))));
                     }
                 }
                 else if (choose_material < 0.95f) 
@@ -87,9 +89,9 @@ object* make_random_world()
 
 object* make_test_world()
 {
-    int num_objects = 4;
+    int num_objects = 5;
     object** pList = new object*[num_objects];
-    pList[0] = new sphere(vec3(-4.0f, 1.0f, 0.0f), 1.0f, new Lambertian(vec3(0.4f, 0.2f, 0.1f)));
+    pList[0] = new sphere(vec3(-4.0f, 1.0f, 0.0f), 1.0f, new Lambertian(new constant_texture(vec3(0.4f, 0.2f, 0.1f))));
     pList[1] = new sphere(vec3(0.0f, 1.0f, 0.0f), 1.0f, new dielectric(1.5f));
     pList[2] = new sphere(vec3(4.0f, 1.0f, 0.0f), 1.0f, new metal(vec3(0.7f, 0.6f, 0.5f), 0.0f));
     vec3 center(0.0f, -4.0f, 0.0f);
@@ -98,7 +100,12 @@ object* make_test_world()
         0.0f,
         0.75f,
         1.0f,
-        new Lambertian(vec3(math::distribution(math::random_number)*math::distribution(math::random_number), math::distribution(math::random_number)*math::distribution(math::random_number), math::distribution(math::random_number)*math::distribution(math::random_number))));
+        new Lambertian(new constant_texture(vec3(math::distribution(math::random_number)*math::distribution(math::random_number), math::distribution(math::random_number)*math::distribution(math::random_number), math::distribution(math::random_number)*math::distribution(math::random_number)))));
+
+    constant_texture* pBlack = new constant_texture(vec3(0.0f, 0.0f, 0.0f));
+    constant_texture* pWhite = new constant_texture(vec3(1.0f, 1.0f, 1.0f));
+    checker_texture* pChecker = new checker_texture(pBlack, pWhite);
+    pList[4] = new sphere(vec3(0, -1000, 0), 1000, new Lambertian(pChecker));
 
     return new object_list(pList, num_objects);
 }
@@ -116,8 +123,8 @@ int main()
     stride /= 32;            // DWORDs per row
     stride *= 4;             // bytes per row
 
-    //object* obj_list = make_test_world();
-    object* obj_list = make_random_world();
+    object* obj_list = make_test_world();
+    //object* obj_list = make_random_world();
 
     vec3 lookfrom(13.0f, 2.0f, 30.0f);
     vec3 lookat(0.0f, 0.0f, 0.0f);

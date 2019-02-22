@@ -68,5 +68,14 @@
     <ClInclude Include="object_list.h">
       <Filter>Source Files\objects</Filter>
     </ClInclude>
+    <ClInclude Include="texture.h">
+      <Filter>Source Files\materials</Filter>
+    </ClInclude>
+    <ClInclude Include="constant_texture.h">
+      <Filter>Source Files\materials</Filter>
+    </ClInclude>
+    <ClInclude Include="checker_texture.h">
+      <Filter>Source Files\materials</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

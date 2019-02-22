@@ -106,6 +106,8 @@
     <ClInclude Include="aabb.h" />
     <ClInclude Include="bvh_node.h" />
     <ClInclude Include="camera.h" />
+    <ClInclude Include="checker_texture.h" />
+    <ClInclude Include="constant_texture.h" />
     <ClInclude Include="dielectric.h" />
     <ClInclude Include="lambertian.h" />
     <ClInclude Include="material.h" />
@@ -116,6 +118,7 @@
     <ClInclude Include="object_list.h" />
     <ClInclude Include="ray.h" />
     <ClInclude Include="sphere.h" />
+    <ClInclude Include="texture.h" />
     <ClInclude Include="vec3.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
