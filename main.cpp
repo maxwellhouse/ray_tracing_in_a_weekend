@@ -1,6 +1,7 @@
 #define STB_IMAGE_WRITE_IMPLEMENTATION
 #include "include/stb/stb_image_write.h"
 
+#include "object_list.h"
 #include "vec3.h"
 #include "ray.h"
 #include "sphere.h"
@@ -11,40 +12,19 @@
 #include "metal.h"
 #include "dielectric.h"
 
-#include <vector>
 #include <iostream>
 
-
-bool hit_any_item_in_list(const std::vector<object*>& obj_list, const ray& r, hit_record& rec)
-{
-    hit_record temp_rec;
-    bool hit_anything = false;
-    float t_min = 0.001f;
-    float closest_so_far = std::numeric_limits<float>::max();
-
-    for (const auto& object : obj_list)
-    {
-        if (object->hit(r, t_min, closest_so_far, temp_rec))
-        {
-            hit_anything = true;
-            closest_so_far = temp_rec.t;
-            rec = temp_rec;
-        }
-    }
-    return hit_anything;
-}
-
-vec3 linear_interp_color(const ray& r, const std::vector<object*>& obj_list, const int depth)
+vec3 linear_interp_color(const ray& r, const object* obj, const int depth)
 {
     vec3 color = vec3(0.0f, 0.0f, 0.0f);
     hit_record rec;
-    if (hit_any_item_in_list(obj_list, r, rec))
+    if(obj->hit(r, 0.001, std::numeric_limits<float>::max(), rec))
     {
         ray scattered;
         vec3 attenuation;
         if(depth < 50 && rec.pMaterial->scatter(r, rec, attenuation, scattered))
         { 
-            color = attenuation * linear_interp_color(scattered, obj_list, depth + 1);
+            color = attenuation * linear_interp_color(scattered, obj, depth + 1);
         }
     }
     else
@@ -57,13 +37,16 @@ vec3 linear_interp_color(const ray& r, const std::vector<object*>& obj_list, con
     return color;
 }
 
-void make_random_world(std::vector<object*>& obj_list)
+object* make_random_world()
 {
-    obj_list.push_back(new sphere(vec3(0, -1000, 0), 1000, new Lambertian(vec3(0.5f, 0.5f, 0.5f))));
+    int i = 0;
+    int num_objects = 11;
+    object** pList = new object*[482];
+    pList[i++] = new sphere(vec3(0, -1000, 0), 1000, new Lambertian(vec3(0.5f, 0.5f, 0.5f)));
 
-    for (int a = -11; a < 11; a++)
+    for (int a = -num_objects; a < num_objects; a++)
     {
-        for (int b = -11; b < 11; b++)
+        for (int b = -num_objects; b < num_objects; b++)
         {
             float choose_material = math::distribution(math::random_number);
             vec3 center(a + 0.9f*math::distribution(math::random_number), 0.2f, b + 0.9f*math::distribution(math::random_number));
@@ -73,46 +56,51 @@ void make_random_world(std::vector<object*>& obj_list)
                 {  // diffuse
                     if (math::random_number() % 2)
                     {
-                        obj_list.push_back(new sphere(center,
-                                                      0.2f,
-                                                      new Lambertian(vec3(math::distribution(math::random_number)*math::distribution(math::random_number), math::distribution(math::random_number)*math::distribution(math::random_number), math::distribution(math::random_number)*math::distribution(math::random_number)))));
+                        pList[i++] = new sphere(center,
+                                        0.2f,
+                                        new Lambertian(vec3(math::distribution(math::random_number)*math::distribution(math::random_number), math::distribution(math::random_number)*math::distribution(math::random_number), math::distribution(math::random_number)*math::distribution(math::random_number))));
                     }
                     else
                     {
-                        obj_list.push_back(new moving_sphere(center,
+                        pList[i++] = new moving_sphere(center,
                             center + vec3(0.0f, 0.5f * math::distribution(math::random_number), 0.0f),
                             0.0f,
                             1.0f,
                             0.2f,
-                            new Lambertian(vec3(math::distribution(math::random_number)*math::distribution(math::random_number), math::distribution(math::random_number)*math::distribution(math::random_number), math::distribution(math::random_number)*math::distribution(math::random_number)))));
+                            new Lambertian(vec3(math::distribution(math::random_number)*math::distribution(math::random_number), math::distribution(math::random_number)*math::distribution(math::random_number), math::distribution(math::random_number)*math::distribution(math::random_number))));
                     }
                 }
                 else if (choose_material < 0.95f) 
                 { // metal
-                    obj_list.push_back(new sphere(center, 0.2f,
-                        new metal(vec3(0.5f*(1 + math::distribution(math::random_number)), 0.5f*(1 + math::distribution(math::random_number)), 0.5f*(1 + math::distribution(math::random_number))), 0.5f*math::distribution(math::random_number))));
+                    pList[i++] = new sphere(center, 0.2f,
+                        new metal(vec3(0.5f*(1 + math::distribution(math::random_number)), 0.5f*(1 + math::distribution(math::random_number)), 0.5f*(1 + math::distribution(math::random_number))), 0.5f*math::distribution(math::random_number)));
                 }
                 else 
                 {  // glass
-                    obj_list.push_back(new sphere(center, 0.2f, new dielectric(1.5f)));
+                    pList[i++] = new sphere(center, 0.2f, new dielectric(1.5f));
                 }
             }
         }
     }
+    return new object_list(pList, i);
 }
 
-void make_test_world(std::vector<object*>& obj_list)
+object* make_test_world()
 {
-    obj_list.push_back(new sphere(vec3(-4.0f, 1.0f, 0.0f), 1.0f, new Lambertian(vec3(0.4f, 0.2f, 0.1f))));
-    obj_list.push_back(new sphere(vec3(0.0f, 1.0f, 0.0f), 1.0f, new dielectric(1.5f)));
-    obj_list.push_back(new sphere(vec3(4.0f, 1.0f, 0.0f), 1.0f, new metal(vec3(0.7f, 0.6f, 0.5f), 0.0f)));
+    int num_objects = 4;
+    object** pList = new object*[num_objects];
+    pList[0] = new sphere(vec3(-4.0f, 1.0f, 0.0f), 1.0f, new Lambertian(vec3(0.4f, 0.2f, 0.1f)));
+    pList[1] = new sphere(vec3(0.0f, 1.0f, 0.0f), 1.0f, new dielectric(1.5f));
+    pList[2] = new sphere(vec3(4.0f, 1.0f, 0.0f), 1.0f, new metal(vec3(0.7f, 0.6f, 0.5f), 0.0f));
     vec3 center(0.0f, -4.0f, 0.0f);
-    obj_list.push_back(new moving_sphere(center, 
+    pList[3] = new moving_sphere(center,
         center + vec3(0.0f, 0.5f*math::distribution(math::random_number), 0.0f),
         0.0f,
         0.75f,
         1.0f,
-        new Lambertian(vec3(math::distribution(math::random_number)*math::distribution(math::random_number), math::distribution(math::random_number)*math::distribution(math::random_number), math::distribution(math::random_number)*math::distribution(math::random_number)))));
+        new Lambertian(vec3(math::distribution(math::random_number)*math::distribution(math::random_number), math::distribution(math::random_number)*math::distribution(math::random_number), math::distribution(math::random_number)*math::distribution(math::random_number))));
+
+    return new object_list(pList, num_objects);
 }
 
 int main()
@@ -128,9 +116,8 @@ int main()
     stride /= 32;            // DWORDs per row
     stride *= 4;             // bytes per row
 
-    std::vector<object*> obj_list;
-    make_test_world(obj_list);
-    //make_random_world(obj_list);
+    //object* obj_list = make_test_world();
+    object* obj_list = make_random_world();
 
     vec3 lookfrom(13.0f, 2.0f, 30.0f);
     vec3 lookat(0.0f, 0.0f, 0.0f);

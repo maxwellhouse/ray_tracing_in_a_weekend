@@ -113,6 +113,7 @@
     <ClInclude Include="metal.h" />
     <ClInclude Include="moving_sphere.h" />
     <ClInclude Include="object.h" />
+    <ClInclude Include="object_list.h" />
     <ClInclude Include="ray.h" />
     <ClInclude Include="sphere.h" />
     <ClInclude Include="vec3.h" />

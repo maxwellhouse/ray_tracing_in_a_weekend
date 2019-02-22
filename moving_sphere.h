@@ -29,7 +29,13 @@ vec3 moving_sphere::centerAtTime(float time) const
 
 bool moving_sphere::bounding_box(const float t0, const float t1, aabb& box) const
 {
-    box = aabb(center - vec3(radius, radius, radius), center - vec3(radius, radius, radius));
+    vec3 center0 = centerAtTime(t0);
+    vec3 center1 = centerAtTime(t1);
+    aabb box0(center0 - vec3(radius, radius, radius), center0 - vec3(radius, radius, radius));
+    aabb box1(center1 - vec3(radius, radius, radius), center1 - vec3(radius, radius, radius));
+
+    box = surrounding_box(box0, box1);
+
     return true;
 }
 
