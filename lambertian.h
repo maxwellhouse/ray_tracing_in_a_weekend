@@ -3,15 +3,13 @@
 
 #include "material.h"
 
-#include <random>
-
 vec3 random_in_unit_sphere()
 {
     vec3 p;
     do
     {
-        p = 2.0 * vec3(distribution(generator), distribution(generator), distribution(generator)) - vec3(1.0f, 1.0f, 1.0f);
-    } while (p.squared_length() >= 1.0);
+        p = 2.0 * vec3(math::distribution(math::random_number), math::distribution(math::random_number), math::distribution(math::random_number)) - vec3(1.0f, 1.0f, 1.0f);
+    } while (dot(p, p) >= 1.0);
     return p;
 }
 

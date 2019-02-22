@@ -1,7 +1,5 @@
 #define STB_IMAGE_WRITE_IMPLEMENTATION
-#include <stb/stb_image_write.h>
-
-#include <cmath>
+#include "include/stb/stb_image_write.h"
 
 #include "vec3.h"
 #include "ray.h"
@@ -14,8 +12,8 @@
 #include "dielectric.h"
 
 #include <vector>
-#include <random>
 #include <iostream>
+
 
 bool hit_any_item_in_list(const std::vector<object*>& obj_list, const ray& r, hit_record& rec)
 {
@@ -59,41 +57,62 @@ vec3 linear_interp_color(const ray& r, const std::vector<object*>& obj_list, con
     return color;
 }
 
-void make_world(std::vector<object*>& obj_list)
+void make_random_world(std::vector<object*>& obj_list)
 {
-    std::random_device rd;  //Will be used to obtain a seed for the random number engine
-    std::mt19937 gen(rd()); //Standard mersenne_twister_engine seeded with rd()
-    std::uniform_real_distribution<float> unif(0, 1);
-
     obj_list.push_back(new sphere(vec3(0, -1000, 0), 1000, new Lambertian(vec3(0.5f, 0.5f, 0.5f))));
 
     for (int a = -11; a < 11; a++)
     {
         for (int b = -11; b < 11; b++)
         {
-            float choose_material = unif(gen);
-            vec3 center(a + 0.9f*unif(gen), 0.2f, b + 0.9f*unif(gen));
+            float choose_material = math::distribution(math::random_number);
+            vec3 center(a + 0.9f*math::distribution(math::random_number), 0.2f, b + 0.9f*math::distribution(math::random_number));
             if ((center - vec3(4.0f, 0.2f, 0.0f)).length() > 0.9f) 
             {
                 if (choose_material < 0.8f) 
                 {  // diffuse
-                    //obj_list.push_back(new sphere(center, 0.2f, new Lambertian(vec3(unif(gen)*unif(gen), unif(gen)*unif(gen), unif(gen)*unif(gen)))));
-                    obj_list.push_back(new moving_sphere(center, center + vec3(0.0f, 0.5f * unif(gen), 0.0f), 0.0f, 1.0f, 0.2f, new Lambertian(vec3(unif(gen)*unif(gen), unif(gen)*unif(gen), unif(gen)*unif(gen)))));
+                    if (math::random_number() % 2)
+                    {
+                        obj_list.push_back(new sphere(center,
+                                                      0.2f,
+                                                      new Lambertian(vec3(math::distribution(math::random_number)*math::distribution(math::random_number), math::distribution(math::random_number)*math::distribution(math::random_number), math::distribution(math::random_number)*math::distribution(math::random_number)))));
+                    }
+                    else
+                    {
+                        obj_list.push_back(new moving_sphere(center,
+                            center + vec3(0.0f, 0.5f * math::distribution(math::random_number), 0.0f),
+                            0.0f,
+                            1.0f,
+                            0.2f,
+                            new Lambertian(vec3(math::distribution(math::random_number)*math::distribution(math::random_number), math::distribution(math::random_number)*math::distribution(math::random_number), math::distribution(math::random_number)*math::distribution(math::random_number)))));
+                    }
                 }
                 else if (choose_material < 0.95f) 
                 { // metal
                     obj_list.push_back(new sphere(center, 0.2f,
-                        new metal(vec3(0.5f*(1 + unif(gen)), 0.5f*(1 + unif(gen)), 0.5f*(1 + unif(gen))), 0.5f*unif(gen))));
+                        new metal(vec3(0.5f*(1 + math::distribution(math::random_number)), 0.5f*(1 + math::distribution(math::random_number)), 0.5f*(1 + math::distribution(math::random_number))), 0.5f*math::distribution(math::random_number))));
                 }
-                else {  // glass
+                else 
+                {  // glass
                     obj_list.push_back(new sphere(center, 0.2f, new dielectric(1.5f)));
                 }
             }
         }
     }
-    obj_list.push_back(new sphere(vec3(0.0f, 1.0f, 0.0f), 1.0f, new dielectric(1.5f)));
+}
+
+void make_test_world(std::vector<object*>& obj_list)
+{
     obj_list.push_back(new sphere(vec3(-4.0f, 1.0f, 0.0f), 1.0f, new Lambertian(vec3(0.4f, 0.2f, 0.1f))));
+    obj_list.push_back(new sphere(vec3(0.0f, 1.0f, 0.0f), 1.0f, new dielectric(1.5f)));
     obj_list.push_back(new sphere(vec3(4.0f, 1.0f, 0.0f), 1.0f, new metal(vec3(0.7f, 0.6f, 0.5f), 0.0f)));
+    vec3 center(0.0f, -4.0f, 0.0f);
+    obj_list.push_back(new moving_sphere(center, 
+        center + vec3(0.0f, 0.5f*math::distribution(math::random_number), 0.0f),
+        0.0f,
+        0.75f,
+        1.0f,
+        new Lambertian(vec3(math::distribution(math::random_number)*math::distribution(math::random_number), math::distribution(math::random_number)*math::distribution(math::random_number), math::distribution(math::random_number)*math::distribution(math::random_number)))));
 }
 
 int main()
@@ -109,13 +128,11 @@ int main()
     stride /= 32;            // DWORDs per row
     stride *= 4;             // bytes per row
 
-    std::default_random_engine generator;
-    std::uniform_real_distribution<float> distribution(0.0f, 1.0f);
-
     std::vector<object*> obj_list;
-    make_world(obj_list);
+    make_test_world(obj_list);
+    //make_random_world(obj_list);
 
-    vec3 lookfrom(13.0f, 2.0f, 3.0f);
+    vec3 lookfrom(13.0f, 2.0f, 30.0f);
     vec3 lookat(0.0f, 0.0f, 0.0f);
     float dist_to_focus = 10.0f;
     float aperture = 0.0f;
@@ -131,8 +148,8 @@ int main()
             vec3 color(0.0f, 0.0f, 0.0f);
             for (int s = 0; s < ns; s++)
             {
-                float u = float(i + distribution(generator)) / float(width);
-                float v = float(j + distribution(generator)) / float(height);
+                float u = float(i + math::distribution(math::random_number)) / float(width);
+                float v = float(j + math::distribution(math::random_number)) / float(height);
                 ray r = cam.get_ray(u, v);
 
                 color += linear_interp_color(r, obj_list, 0);

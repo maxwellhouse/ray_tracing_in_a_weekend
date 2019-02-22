@@ -62,5 +62,8 @@
     <ClInclude Include="bvh_node.h">
       <Filter>Source Files\objects</Filter>
     </ClInclude>
+    <ClInclude Include="math.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>
