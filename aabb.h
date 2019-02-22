@@ -19,27 +19,28 @@ public:
     vec3 max() const { return maxVec; }
     vec3 min() const { return minVec; }
 
-    inline bool hit(const ray& r, const float tMin, const float tMax) const;
+    inline bool hit(const ray& r, float tMin, float tMax) const;
 
 private:
     vec3 minVec;
     vec3 maxVec;
 };
 
-inline bool aabb::hit(const ray& r, const float tMin, const float tMax) const
+inline bool aabb::hit(const ray& r, float tMin, float tMax) const
 {
     for (int a = 0; a < 3; a++)
     {
         float invD = 1.0f / r.direction()[a];
-        float t0 = (min()[a] - r.origin()[a]) * invD;
-        float t1 = (max()[a] - r.origin()[a]) * invD;
+        float v = r.origin()[a];
+        float t0 = (minVec[a] - v) * invD;
+        float t1 = (maxVec[a] - v) * invD;
         if (invD < 0.0f)
         {
             std::swap(t0, t1);
         }
-        float tmin = t0 > tmin ? t0 : tmin;
-        float tmax = t1 < tmax ? t1 : tmax;
-        if (tmax <= tmin)
+        tMin = t0 > tMin ? t0 : tMin;
+        tMax = t1 < tMax ? t1 : tMax;
+        if (tMax <= tMin)
         {
             return true;
         }

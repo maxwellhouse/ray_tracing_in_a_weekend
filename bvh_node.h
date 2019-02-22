@@ -136,7 +136,7 @@ bool bvh_node::hit(const ray& r, const float t_min, const float t_max, hit_recor
         hit_record right_rec;
 
         bool hit_left = pLeft->hit(r, t_min, t_max, left_rec);
-        bool hit_right = pLeft->hit(r, t_min, t_max, right_rec);
+        bool hit_right = pRight->hit(r, t_min, t_max, right_rec);
 
         if (hit_left && hit_right)
         {

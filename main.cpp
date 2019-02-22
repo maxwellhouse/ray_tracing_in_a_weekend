@@ -13,8 +13,10 @@
 #include "dielectric.h"
 #include "constant_texture.h"
 #include "checker_texture.h"
+#include "bvh_node.h"
 
 #include <iostream>
+#include <chrono>
 
 vec3 linear_interp_color(const ray& r, const object* obj, const int depth)
 {
@@ -84,7 +86,7 @@ object* make_random_world()
             }
         }
     }
-    return new object_list(pList, i);
+    return new bvh_node(pList, i, 0.0f, 1.0f);
 }
 
 object* make_test_world()
@@ -107,7 +109,21 @@ object* make_test_world()
     checker_texture* pChecker = new checker_texture(pBlack, pWhite);
     pList[4] = new sphere(vec3(0, -1000, 0), 1000, new Lambertian(pChecker));
 
-    return new object_list(pList, num_objects);
+    return new bvh_node(pList, num_objects, 0.0f, 1.0f);
+}
+
+object* make_two_spheres()
+{
+    int num_objects = 2;
+    object** pList = new object*[num_objects];
+    constant_texture* pBlue = new constant_texture(vec3(0.0f, 0.0f, 0.6f));
+    constant_texture* pGreen = new constant_texture(vec3(0.0f, 0.6f, 0.0f));
+    checker_texture* pChecker = new checker_texture(pBlue, pGreen);
+    checker_texture* pRevChecker = new checker_texture(pGreen, pBlue);
+    pList[0] = new sphere(vec3(0.0f, -10.0f, 0.0f), 10, new Lambertian(pChecker));
+    pList[1] = new sphere(vec3(0.0f, 10.0f, 0.0f), 10, new Lambertian(pRevChecker));
+
+    return new bvh_node(pList, num_objects, 0.0f, 1.0f);
 }
 
 int main()
@@ -123,17 +139,19 @@ int main()
     stride /= 32;            // DWORDs per row
     stride *= 4;             // bytes per row
 
-    object* obj_list = make_test_world();
+    //object* obj_list = make_test_world();
     //object* obj_list = make_random_world();
+    object* obj_list = make_two_spheres();
 
-    vec3 lookfrom(13.0f, 2.0f, 30.0f);
+    vec3 lookfrom(13.0f, 2.0f, 6.0f);
     vec3 lookat(0.0f, 0.0f, 0.0f);
     float dist_to_focus = 10.0f;
     float aperture = 0.0f;
-    float fov = 20.0f;
+    float fov = 40.0f;
 
     camera cam(lookfrom, lookat, vec3(0, 1, 0), fov, float(width) / float(height), aperture, dist_to_focus, 0.0f, 1.0f);
 
+    std::chrono::steady_clock::time_point t1 = std::chrono::steady_clock::now();
     for(int j = height-1; j >= 0; j--)
     {
         std::cout << j << "\n";
@@ -158,6 +176,10 @@ int main()
             image.push_back(ib);
         }
     }
-    
+    std::chrono::steady_clock::time_point t2 = std::chrono::steady_clock::now();
+    std::chrono::duration<double> time_span = std::chrono::duration_cast<std::chrono::duration<double>>(t2 - t1);
+    std::cout << time_span.count() << " seconds.";
+    system("pause");
+
     stbi_write_png("test.png", width, height, comp, image.data(), stride);
 }
