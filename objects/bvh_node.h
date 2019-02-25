@@ -83,7 +83,7 @@ inline bvh_node::bvh_node(object ** obj_list, const int n, const float t0, const
 {
     aabb box_left;
     aabb box_right;
-    int axis = int(3 * math::distribution(math::random_number));
+    int axis = int(3 * math::rand());
     if (axis == 0)
     {
         qsort(obj_list, n, sizeof(object*), box_x_compare);

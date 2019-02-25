@@ -19,6 +19,7 @@ set(
     math/math.h
     math/ray.h
     math/vec3.h
+    math/perlin_noise.h
     
     objects/aabb.h
     objects/bvh_node.h
@@ -27,6 +28,7 @@ set(
     objects/object_list.h
     objects/sphere.h
     
+    textures/noise_texture.h
     textures/checker_texture.h
     textures/constant_texture.h
     textures/texture.h

@@ -9,7 +9,7 @@ vec3 random_in_unit_disk()
 {
     vec3 p;
     do {
-        p = 2.0 * vec3(math::distribution(math::random_number), math::distribution(math::random_number), 0) - vec3(1, 1, 0);
+        p = 2.0 * vec3(math::rand(), math::rand(), 0) - vec3(1, 1, 0);
     } while (dot(p, p) >= 1.0);
     return p;
 }
@@ -37,7 +37,7 @@ public:
     {
         vec3 rd = lens_radius * random_in_unit_disk();
         vec3 offset = u * rd.x() + v * rd.y();
-        float time = time0 + math::distribution(math::random_number)*(time1 - time0);
+        float time = time0 + math::rand()*(time1 - time0);
         return ray(origin + offset, lower_left_corner + s * horizontal + t * vertical - origin - offset, time);
     }
 

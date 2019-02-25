@@ -56,7 +56,7 @@ public:
             reflect_prob = schlick(cosine, reflective_index);
         }
 
-        if (math::distribution(math::random_number) < reflect_prob)
+        if (math::rand() < reflect_prob)
         {
             scattered = ray(rec.p, reflected, ray_in.time());
         }
