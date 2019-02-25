@@ -2,8 +2,8 @@
 
 #include <cmath>
 
-#include "ray.h"
-#include "math.h"
+#include "math/ray.h"
+#include "math/math.h"
 
 vec3 random_in_unit_disk() 
 {

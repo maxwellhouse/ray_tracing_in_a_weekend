@@ -1,19 +1,19 @@
 #define STB_IMAGE_WRITE_IMPLEMENTATION
 #include "include/stb/stb_image_write.h"
 
-#include "object_list.h"
-#include "vec3.h"
-#include "ray.h"
-#include "sphere.h"
-#include "moving_sphere.h"
 #include "camera.h"
-#include "material.h"
-#include "lambertian.h"
-#include "metal.h"
-#include "dielectric.h"
-#include "constant_texture.h"
-#include "checker_texture.h"
-#include "bvh_node.h"
+#include "objects/object_list.h"
+#include "objects/sphere.h"
+#include "objects/moving_sphere.h"
+#include "objects/bvh_node.h"
+#include "math/vec3.h"
+#include "math/ray.h"
+#include "materials/material.h"
+#include "materials/lambertian.h"
+#include "materials/metal.h"
+#include "materials/dielectric.h"
+#include "textures/constant_texture.h"
+#include "textures/checker_texture.h"
 
 #include <iostream>
 #include <chrono>
@@ -22,7 +22,7 @@ vec3 linear_interp_color(const ray& r, const object* obj, const int depth)
 {
     vec3 color = vec3(0.0f, 0.0f, 0.0f);
     hit_record rec;
-    if(obj->hit(r, 0.001, std::numeric_limits<float>::max(), rec))
+    if(obj->hit(r, 0.001f, std::numeric_limits<float>::max(), rec))
     {
         ray scattered;
         vec3 attenuation;

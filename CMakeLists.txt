@@ -4,5 +4,43 @@ set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
 
 project("Ray tracing in a weekend")
 
-add_executable(raytracer main.cpp)
-target_link_libraries(raytracer m dl)
+set(CMAKE_INCLUDE_CURRENT_DIR ON)
+
+add_executable(raytracer 
+    main.cpp
+    camera.h
+    
+    materials/dielectric.h
+    materials/lambertian.h
+    materials/material.h
+    materials/metal.h
+    
+    math/math.h
+    math/ray.h
+    math/vec3.h
+    
+    objects/aabb.h
+    objects/bvh_node.h
+    objects/moving_sphere.h
+    objects/object.h
+    objects/object_list.h
+    objects/sphere.h
+    
+    textures/checker_texture.h
+    textures/constant_texture.h
+    textures/texture.h)
+    
+target_include_directories(raytracer
+    PRIVATE
+        ../materials
+        ../math
+        ../objects
+        ../textures
+)
+
+if(LINUX)
+    target_link_libraries(raytracer m dl)
+endif (LINUX)
+if(MSVC)
+    target_link_libraries(raytracer)
+endif (MSVC)
