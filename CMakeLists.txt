@@ -6,7 +6,8 @@ project("Ray tracing in a weekend")
 
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
 
-add_executable(raytracer 
+set(
+    source_list
     main.cpp
     camera.h
     
@@ -29,7 +30,15 @@ add_executable(raytracer
     textures/checker_texture.h
     textures/constant_texture.h
     textures/texture.h
-    )
+)
+
+add_executable(raytracer ${source_list})
+
+foreach(source IN LISTS source_list)
+    get_filename_component(source_path "${source}" PATH)
+    string(REPLACE "/" "\\" source_path_msvc "${source_path}")
+    source_group("${source_path_msvc}" FILES "${source}")
+endforeach()
     
 target_include_directories(raytracer
     PRIVATE
