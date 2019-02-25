@@ -23,7 +23,8 @@ compile_commands.json
 CTestTestfile.cmake
 _deps
 
-# Out name
+# Out name and build path
+build/*
 ray_tracer.exe
 test.png
 

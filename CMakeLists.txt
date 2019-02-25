@@ -28,7 +28,8 @@ add_executable(raytracer
     
     textures/checker_texture.h
     textures/constant_texture.h
-    textures/texture.h)
+    textures/texture.h
+    )
     
 target_include_directories(raytracer
     PRIVATE
@@ -42,5 +43,6 @@ if(LINUX)
     target_link_libraries(raytracer m dl)
 endif (LINUX)
 if(MSVC)
+    SET(CMAKE_CXX_FLAGS "/EHsc")
     target_link_libraries(raytracer)
 endif (MSVC)
