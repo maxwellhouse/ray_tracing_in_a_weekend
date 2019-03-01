@@ -1,8 +1,6 @@
 #pragma once
 #include "texture.h"
 
-#include <cmath>
-
 class checker_texture : public texture
 {
 public:
@@ -17,7 +15,7 @@ private:
 
 vec3 checker_texture::value(float u, float v, const vec3 & p) const
 {
-    float sines = std::sin(10 * p.x()) * std::sin(10 * p.y()) * std::sin(10 * p.z());
+    float sines = math::fastFloatSin(10 * p.x()) * math::fastFloatSin(10 * p.y()) * math::fastFloatSin(10 * p.z());
     if (sines < 0)
     {
         return pOdd->value(u, v, p);

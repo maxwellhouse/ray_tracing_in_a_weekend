@@ -109,7 +109,7 @@ inline bvh_node::bvh_node(object ** obj_list, const int n, const float t0, const
     else
     {
         pLeft = new bvh_node(obj_list, n / 2, t0, t1);
-        pRight = new bvh_node(obj_list + n / 2, n - (n / 2), t0, t1);
+        pRight = new bvh_node(obj_list + n / 2, n - n / 2, t0, t1);
     }
     if (pLeft->bounding_box(t0, t1, box_left) == false || pRight->bounding_box(t0, t1, box_right) == false)
     {

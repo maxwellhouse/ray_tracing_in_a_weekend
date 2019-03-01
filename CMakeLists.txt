@@ -28,6 +28,7 @@ set(
     objects/object_list.h
     objects/sphere.h
     
+	textures/image_texture.h
     textures/noise_texture.h
     textures/checker_texture.h
     textures/constant_texture.h

@@ -1,7 +1,12 @@
 #define STB_IMAGE_WRITE_IMPLEMENTATION
 #include "include/stb/stb_image_write.h"
 
+#define STB_IMAGE_IMPLEMENTATION
+#include "include/stb/stb_image.h"
+
 #include "camera.h"
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wmicrosoft-include"
 #include "objects/object_list.h"
 #include "objects/sphere.h"
 #include "objects/moving_sphere.h"
@@ -15,6 +20,8 @@
 #include "textures/constant_texture.h"
 #include "textures/checker_texture.h"
 #include "textures/noise_texture.h"
+#include "textures/image_texture.h"
+#pragma clang diagnostic pop
 
 #include <iostream>
 #include <chrono>
@@ -46,7 +53,7 @@ object* make_random_world()
 {
     int i = 0;
     int num_objects = 11;
-    object** pList = new object*[482];
+    auto pList = new object*[482];
     pList[i++] = new sphere(vec3(0, -1000, 0), 1000, new Lambertian(new constant_texture(vec3(0.5f, 0.5f, 0.5f))));
 
     for (int a = -num_objects; a < num_objects; a++)
@@ -93,7 +100,7 @@ object* make_random_world()
 object* make_test_world()
 {
     int num_objects = 5;
-    object** pList = new object*[num_objects];
+    auto pList = new object*[num_objects];
     pList[0] = new sphere(vec3(-4.0f, 1.0f, 0.0f), 1.0f, new Lambertian(new constant_texture(vec3(0.4f, 0.2f, 0.1f))));
     pList[1] = new sphere(vec3(0.0f, 1.0f, 0.0f), 1.0f, new dielectric(1.5f));
     pList[2] = new sphere(vec3(4.0f, 1.0f, 0.0f), 1.0f, new metal(vec3(0.7f, 0.6f, 0.5f), 0.0f));
@@ -105,9 +112,9 @@ object* make_test_world()
         1.0f,
         new Lambertian(new constant_texture(vec3(math::rand()*math::rand(), math::rand()*math::rand(), math::rand()*math::rand()))));
 
-    constant_texture* pBlack = new constant_texture(vec3(0.0f, 0.0f, 0.0f));
-    constant_texture* pWhite = new constant_texture(vec3(1.0f, 1.0f, 1.0f));
-    checker_texture* pChecker = new checker_texture(pBlack, pWhite);
+    auto pBlack = new constant_texture(vec3(0.0f, 0.0f, 0.0f));
+    auto pWhite = new constant_texture(vec3(1.0f, 1.0f, 1.0f));
+    auto pChecker = new checker_texture(pBlack, pWhite);
     pList[4] = new sphere(vec3(0, -1000, 0), 1000, new Lambertian(pChecker));
 
     //return new bvh_node(pList, num_objects, 0.0f, 1.0f);
@@ -117,8 +124,8 @@ object* make_test_world()
 object* make_two_perlin_spheres()
 {
     int num_objects = 2;
-    object** pList = new object*[num_objects];
-    noise_texture* pNoise = new noise_texture(true, 4.0f);
+    auto pList = new object*[num_objects];
+    auto pNoise = new noise_texture(true, 1.0f);
     pList[0] = new sphere(vec3(0.0f, -1000.0f, 0.0f), 1000, new Lambertian(pNoise));
     pList[1] = new sphere(vec3(0.0f, 2.0f, 0.0f), 2, new Lambertian(pNoise));
 
@@ -128,13 +135,28 @@ object* make_two_perlin_spheres()
 object* make_two_spheres()
 {
     int num_objects = 2;
-    object** pList = new object*[num_objects];
-    constant_texture* pBlue = new constant_texture(vec3(0.0f, 0.0f, 0.6f));
-    constant_texture* pGreen = new constant_texture(vec3(0.0f, 0.6f, 0.0f));
-    checker_texture* pChecker = new checker_texture(pBlue, pGreen);
-    checker_texture * pRevChecker = new checker_texture(pGreen, pBlue);
+    auto pList = new object*[num_objects];
+    auto pBlue = new constant_texture(vec3(0.0f, 0.0f, 0.6f));
+    auto pGreen = new constant_texture(vec3(0.0f, 0.6f, 0.0f));
+    auto pChecker = new checker_texture(pBlue, pGreen);
+    auto pRevChecker = new checker_texture(pGreen, pBlue);
     pList[0] = new sphere(vec3(0.0f, -10.0f, 0.0f), 10, new Lambertian(pChecker));
     pList[1] = new sphere(vec3(0.0f, 10.0f, 0.0f), 10, new Lambertian(pRevChecker));
+
+    return new bvh_node(pList, num_objects, 0.0f, 1.0f);
+}
+
+object* make_textured_sphere()
+{
+    int num_objects = 1;
+    auto pList = new object*[num_objects];
+    /*auto pNoise = new noise_texture(true, 1.0f);
+    pList[0] = new sphere(vec3(0.0f, -1000.0f, 0.0f), 1000, new Lambertian(pNoise));*/
+
+    int nx, ny, nn;
+    unsigned char *tex_data = stbi_load("E:/Projects/ray_tracing_in_a_weekend/physical_earth_satellite_image_mural_lg.jpg", &nx, &ny, &nn, 0);
+    auto pImageTexture = new image_texture(tex_data, nx, ny);
+    pList[0] = new sphere(vec3(0.0f, 2.0f, 0.0f), 2, new Lambertian(pImageTexture));
 
     return new bvh_node(pList, num_objects, 0.0f, 1.0f);
 }
@@ -152,9 +174,9 @@ int main()
     stride /= 32;            // DWORDs per row
     stride *= 4;             // bytes per row
 
-    object* obj_list = make_test_world();
+    //object* obj_list = make_test_world();
     //object* obj_list = make_random_world();
-    //object* obj_list = make_two_perlin_spheres();
+    object* obj_list = make_textured_sphere();
 
     vec3 lookfrom(0.0f, 2.0f, 10.0f);
     vec3 lookat(0.0f, 0.0f, 0.0f);
@@ -167,7 +189,7 @@ int main()
     std::chrono::steady_clock::time_point t1 = std::chrono::steady_clock::now();
     for(int j = height-1; j >= 0; j--)
     {
-        std::cout << j << "\n";
+        //std::cout << j << "\n";
         for(int i = 0; i < width; i++)
         {
             vec3 color(0.0f, 0.0f, 0.0f);
@@ -181,9 +203,9 @@ int main()
             }
             color /= float(ns);
             color = vec3(sqrtf(color[0]), sqrtf(color[1]), sqrtf(color[2]));
-            uint8_t ir = uint8_t(255.99*color.r());
-            uint8_t ig = uint8_t(255.99*color.g());
-            uint8_t ib = uint8_t(255.99*color.b());
+            auto ir = uint8_t(255.99*color.r());
+            auto ig = uint8_t(255.99*color.g());
+            auto ib = uint8_t(255.99*color.b());
             image.push_back(ir);
             image.push_back(ig);
             image.push_back(ib);

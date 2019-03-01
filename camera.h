@@ -1,9 +1,10 @@
 #pragma once
 
-#include <cmath>
-
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wmicrosoft-include"
 #include "math/ray.h"
 #include "math/math.h"
+#pragma clang diagnostic pop
 
 vec3 random_in_unit_disk() 
 {
