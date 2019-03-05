@@ -19,38 +19,35 @@ private:
 
 bool sphere::hit(const ray& r, const float t_min, const float t_max, hit_record& rec) const
 {
-    bool hit = false;
-    vec3 origin_center = r.origin() - center;
+    vec3 oc = r.origin() - center;
     float a = dot(r.direction(), r.direction());
-    float b = dot(origin_center, r.direction());
-    float c = dot(origin_center, origin_center) - radius * radius;
+    float b = dot(oc, r.direction());
+    float c = dot(oc, oc) - radius * radius;
     float discriminant = b * b - a * c;
-
-    if (discriminant > 0)
+    if (discriminant > 0) 
     {
-        float temp = (-b - sqrtf(discriminant)) / a;
-        if (temp < t_max && temp > t_min)
+        float temp = (-b - sqrt(b*b - a * c)) / a;
+        if (temp < t_max && temp > t_min) 
         {
             rec.t = temp;
             rec.p = r.point_at_parameter(rec.t);
+            math::get_sphere_uv((rec.p - center) / radius, rec.u, rec.v);
             rec.normal = (rec.p - center) / radius;
             rec.pMaterial = pMaterial;
-            hit = true;
+            return true;
         }
-        else
+        temp = (-b + sqrt(b*b - a * c)) / a;
+        if (temp < t_max && temp > t_min) 
         {
-            temp = (-b + sqrtf(discriminant) / a);
-            if (temp < t_max && temp > t_min)
-            {
-                rec.t = temp;
-                rec.p = r.point_at_parameter(rec.t);
-                rec.normal = (rec.p - center) / radius;
-                rec.pMaterial = pMaterial;
-                hit = true;
-            }
+            rec.t = temp;
+            rec.p = r.point_at_parameter(rec.t);
+            math::get_sphere_uv((rec.p - center) / radius, rec.u, rec.v);
+            rec.normal = (rec.p - center) / radius;
+            rec.pMaterial = pMaterial;
+            return true;
         }
     }
-    return hit;
+    return false;
 }
 
 bool sphere::bounding_box(const float t0, const float t1, aabb& box) const

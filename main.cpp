@@ -36,7 +36,7 @@ vec3 linear_interp_color(const ray& r, const object* obj, const int depth)
         vec3 attenuation;
         if(depth < 50 && rec.pMaterial->scatter(r, rec, attenuation, scattered))
         { 
-            color = attenuation * linear_interp_color(scattered, obj, depth + 1);
+            color = attenuation;// *linear_interp_color(scattered, obj, depth + 1);
         }
     }
     else
@@ -148,16 +148,14 @@ object* make_two_spheres()
 
 object* make_textured_sphere()
 {
-    int num_objects = 1;
+    int num_objects = 2;
     auto pList = new object*[num_objects];
-    /*auto pNoise = new noise_texture(true, 1.0f);
-    pList[0] = new sphere(vec3(0.0f, -1000.0f, 0.0f), 1000, new Lambertian(pNoise));*/
-
     int nx, ny, nn;
     unsigned char *tex_data = stbi_load("E:/Projects/ray_tracing_in_a_weekend/physical_earth_satellite_image_mural_lg.jpg", &nx, &ny, &nn, 0);
     auto pImageTexture = new image_texture(tex_data, nx, ny);
     pList[0] = new sphere(vec3(0.0f, 2.0f, 0.0f), 2, new Lambertian(pImageTexture));
-
+    auto pNoise = new noise_texture(true, 1.0f);
+    pList[1] = new sphere(vec3(0.0f, -1000.0f, 0.0f), 1000, new Lambertian(pNoise));
     return new bvh_node(pList, num_objects, 0.0f, 1.0f);
 }
 
