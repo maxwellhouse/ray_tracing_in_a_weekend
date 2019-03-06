@@ -1,20 +1,24 @@
 #pragma once
 #include "object.h"
 
-class object_list : public object 
+class object_list : public object
 {
 public:
     object_list() {}
-    object_list(object **l, int n) { list = l; list_size = n; }
+    object_list(object** l, int n)
+    {
+        list = l;
+        list_size = n;
+    }
     bool hit(const ray& r, float tmin, float tmax, hit_record& rec) const override;
     bool bounding_box(float t0, float t1, aabb& box) const override;
 
 private:
-    object **list;
+    object** list;
     int list_size;
 };
 
-bool object_list::bounding_box(float t0, float t1, aabb& box) const 
+bool object_list::bounding_box(float t0, float t1, aabb& box) const
 {
     if (list_size < 1)
     {
@@ -32,9 +36,9 @@ bool object_list::bounding_box(float t0, float t1, aabb& box) const
         box = temp_box;
     }
 
-    for (int i = 1; i < list_size; i++) 
+    for (int i = 1; i < list_size; i++)
     {
-        if (list[i]->bounding_box(t0, t1, temp_box)) 
+        if (list[i]->bounding_box(t0, t1, temp_box))
         {
             box = surrounding_box(box, temp_box);
         }
@@ -46,14 +50,14 @@ bool object_list::bounding_box(float t0, float t1, aabb& box) const
     return true;
 }
 
-bool object_list::hit(const ray& r, float t_min, float t_max, hit_record& rec) const 
+bool object_list::hit(const ray& r, float t_min, float t_max, hit_record& rec) const
 {
     hit_record temp_rec;
     bool hit_anything = false;
     float closest_so_far = t_max;
-    for (int i = 0; i < list_size; i++) 
+    for (int i = 0; i < list_size; i++)
     {
-        if (list[i]->hit(r, t_min, closest_so_far, temp_rec)) 
+        if (list[i]->hit(r, t_min, closest_so_far, temp_rec))
         {
             hit_anything = true;
             closest_so_far = temp_rec.t;

@@ -1,10 +1,10 @@
 #pragma once
-#include "object.h"
 #include "math.h"
+#include "object.h"
 
 #include <iostream>
 
-class bvh_node: public object
+class bvh_node : public object
 {
 public:
     bvh_node() {}
@@ -23,7 +23,7 @@ inline int box_x_compare(const void* a, const void* b)
 {
     aabb box_left;
     aabb box_right;
-    object *ah = *(object**)a;
+    object* ah = *(object**)a;
     object* bh = *(object**)b;
     if (ah->bounding_box(0, 0, box_left) == false || bh->bounding_box(0, 0, box_right) == false)
     {
@@ -43,7 +43,7 @@ inline int box_y_compare(const void* a, const void* b)
 {
     aabb box_left;
     aabb box_right;
-    object *ah = *(object**)a;
+    object* ah = *(object**)a;
     object* bh = *(object**)b;
     if (ah->bounding_box(0, 0, box_left) == false || bh->bounding_box(0, 0, box_right) == false)
     {
@@ -63,7 +63,7 @@ inline int box_z_compare(const void* a, const void* b)
 {
     aabb box_left;
     aabb box_right;
-    object *ah = *(object**)a;
+    object* ah = *(object**)a;
     object* bh = *(object**)b;
     if (ah->bounding_box(0, 0, box_left) == false || bh->bounding_box(0, 0, box_right) == false)
     {
@@ -79,7 +79,7 @@ inline int box_z_compare(const void* a, const void* b)
     }
 }
 
-inline bvh_node::bvh_node(object ** obj_list, const int n, const float t0, const float t1)
+inline bvh_node::bvh_node(object** obj_list, const int n, const float t0, const float t1)
 {
     aabb box_left;
     aabb box_right;

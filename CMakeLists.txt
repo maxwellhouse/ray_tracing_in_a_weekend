@@ -12,6 +12,7 @@ set(
     camera.h
     
     materials/dielectric.h
+	materials/diffuse_light.h
     materials/lambertian.h
     materials/material.h
     materials/metal.h
@@ -21,6 +22,7 @@ set(
     math/vec3.h
     math/perlin_noise.h
     
+	objects/aa_rectangle.h
     objects/aabb.h
     objects/bvh_node.h
     objects/moving_sphere.h

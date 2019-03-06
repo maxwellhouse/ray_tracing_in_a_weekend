@@ -1,19 +1,26 @@
 #pragma once
 #include <random>
-#include "vec3.h"
 
-namespace math 
+namespace math
 {
-    std::uniform_real_distribution<float> distribution(0.0f, 1.0f);
+static constexpr float PI = 3.14159265358979323846f;
+static constexpr float TOLERANCE = 1e-06f;
+std::uniform_real_distribution<float> distribution(0.0f, 1.0f);
 
-    std::random_device rd;  //Will be used to obtain a seed for the random number engine
-    std::mt19937 random_number(rd()); //Standard mersenne_twister_engine seeded with rd()
+std::random_device rd;            //Will be used to obtain a seed for the random number engine
+std::mt19937 random_number(rd()); //Standard mersenne_twister_engine seeded with rd()
 
-    float rand() { return distribution(random_number); }
+float rand()
+{
+    return distribution(random_number);
+}
 
-    static const float PI = 3.14159265358979323846f;
+bool floatEquals(const float num1, const float num2, const float tolerance = TOLERANCE)
+{
+    return (std::fabs(num2 - num1) < tolerance);
+}
 
-    const float FloatCosTable[] = {
+const float FloatCosTable[] = {
     1,          //  0  Degrees
     0.999847f,  //  1  Degrees
     0.99939f,   //  2  Degrees
@@ -105,56 +112,48 @@ namespace math
     0.0348969f, //  88  Degrees
     0.0174561f, //  89  Degrees
     0,          //  90  Degrees
-    };
+};
 
-    float fastFloatCos(int Angle)
+constexpr float fastFloatCos(int Angle)
+{
+    assert(Angle < 360 * 3 && Angle > -360 * 3);
+
+    while (Angle >= 360)
     {
-        assert(Angle < 360 * 3 && Angle > -360 * 3);
-
-        while (Angle >= 360)
-        {
-            Angle -= 360;
-        }
-
-        while (Angle < 0)
-        {
-            Angle += 360;
-        }
-
-        if (Angle <= 90)
-        {
-            return (FloatCosTable[Angle]);
-        }
-        else if (Angle <= 180)
-        {
-            return (-FloatCosTable[180 - Angle]);
-        }
-        else if (Angle <= 270)
-        {
-            return (-FloatCosTable[Angle - 180]);
-        }
-        else
-        {
-            return (FloatCosTable[360 - Angle]);
-        }
+        Angle -= 360;
     }
 
-    float fastFloatSin(int Angle)
+    while (Angle < 0)
     {
-        return (fastFloatCos(Angle - 90));
+        Angle += 360;
     }
 
-    template <class T>
-    T clamp(const T& value, const T& lowerLimit, const T& upperLimit)
+    if (Angle <= 90)
     {
-        return std::min(upperLimit, std::max(lowerLimit, value));
+        return (FloatCosTable[Angle]);
     }
-
-    void get_sphere_uv(const vec3& p, float& u, float& v)
+    else if (Angle <= 180)
     {
-        float phi = atan2(p.z(), p.x());
-        float theta = asin(p.y());
-        u = 1 - (phi + PI) / (2 * PI);
-        v = (theta + PI / 2) / PI;
+        return (-FloatCosTable[180 - Angle]);
+    }
+    else if (Angle <= 270)
+    {
+        return (-FloatCosTable[Angle - 180]);
+    }
+    else
+    {
+        return (FloatCosTable[360 - Angle]);
     }
 }
+
+constexpr float fastFloatSin(int Angle)
+{
+    return (fastFloatCos(Angle - 90));
+}
+
+template <class T>
+T clamp(const T& value, const T& lowerLimit, const T& upperLimit)
+{
+    return std::min(upperLimit, std::max(lowerLimit, value));
+}
+} // namespace math

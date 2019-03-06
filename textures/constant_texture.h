@@ -8,6 +8,7 @@ public:
     constant_texture() {}
     constant_texture(const vec3& c) : color(c) {}
     vec3 value(float u, float v, const vec3& p) const override;
+
 private:
     vec3 color;
 };

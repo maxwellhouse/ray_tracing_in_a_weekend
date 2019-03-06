@@ -27,7 +27,7 @@ float schlick(const float cosine, const float reflective_index)
 class dielectric : public material
 {
 public:
-    dielectric(const float i): reflective_index(i) {}
+    dielectric(const float i) : reflective_index(i) {}
     bool scatter(const ray& ray_in, const hit_record& rec, vec3& attenuation, ray& scattered) const override
     {
         vec3 outward_normal;

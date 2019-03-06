@@ -2,8 +2,8 @@
 
 #pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Wmicrosoft-include"
-#include "math/vec3.h"
 #include "math/ray.h"
+#include "math/vec3.h"
 #pragma clang diagnostic pop
 #include "aabb.h"
 

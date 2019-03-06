@@ -10,7 +10,13 @@ vec3 reflect(const vec3& v1, const vec3& v2)
 class metal : public material
 {
 public:
-    metal(const vec3& v, const float f) : albedo(v) { if (f < 1.0f) fuzz = f; else fuzz = 1; }
+    metal(const vec3& v, const float f) : albedo(v)
+    {
+        if (f < 1.0f)
+            fuzz = f;
+        else
+            fuzz = 1;
+    }
 
     bool scatter(const ray& ray_in, const hit_record& rec, vec3& attenuation, ray& scatter) const override
     {

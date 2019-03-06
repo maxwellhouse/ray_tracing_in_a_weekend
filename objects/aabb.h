@@ -38,8 +38,8 @@ inline bool aabb::hit(const ray& r, float tMin, float tMax) const
         {
             std::swap(t0, t1);
         }
-        tMin = ffmax(t0 ,tMin);
-        tMax = ffmin(t1 ,tMax);
+        tMin = ffmax(t0, tMin);
+        tMax = ffmin(t1, tMax);
         if (tMax <= tMin)
         {
             return true;
@@ -52,5 +52,5 @@ inline aabb surrounding_box(const aabb& box1, const aabb& box2)
 {
     vec3 small(ffmin(box1.min().x(), box2.min().x()), ffmin(box1.min().y(), box2.min().y()), ffmin(box1.min().z(), box2.min().z()));
     vec3 big(ffmax(box1.min().x(), box2.min().x()), ffmax(box1.min().y(), box2.min().y()), ffmax(box1.min().z(), box2.min().z()));
-    return aabb(big,small);
+    return aabb(big, small);
 }

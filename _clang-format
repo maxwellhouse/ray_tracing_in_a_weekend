@@ -1,0 +1,315 @@
+# Navico Clang-Format Rules
+# Refer to http://clang.llvm.org/docs/ClangFormatStyleOptions.html for information on the options,
+# or to the Navico CodingStyleStandard document for information on the rules.
+# Version: 2.0 (16/3/2018)
+# Requires LLVM version 6.0.0 or later.
+
+# General Options
+Language: Cpp
+Standard: Cpp11
+TabWidth: 4
+UseTab: Never
+ColumnLimit: 140
+PointerAlignment: Left
+
+# Whitespace Settings
+MaxEmptyLinesToKeep: 2
+ReflowComments: false
+SortUsingDeclarations: true
+SpaceAfterCStyleCast: false
+SpaceAfterTemplateKeyword: true
+SpaceBeforeAssignmentOperators: true
+SpaceBeforeParens: ControlStatements
+SpaceInEmptyParentheses: false
+SpacesBeforeTrailingComments: 1
+SpacesInAngles:  false
+SpacesInContainerLiterals: true
+SpacesInCStyleCastParentheses: false
+SpacesInParentheses: false
+SpacesInSquareBrackets: false
+
+# Single/Multiline Collapse/Expansion
+AllowAllParametersOfDeclarationOnNextLine: false
+AllowShortBlocksOnASingleLine: false
+AllowShortCaseLabelsOnASingleLine: false
+AllowShortFunctionsOnASingleLine: InlineOnly
+AllowShortIfStatementsOnASingleLine: false
+AllowShortLoopsOnASingleLine: false
+AlwaysBreakAfterDefinitionReturnType: None
+AlwaysBreakAfterReturnType: None
+AlwaysBreakBeforeMultilineStrings: false
+AlwaysBreakTemplateDeclarations: true
+BreakBeforeBinaryOperators: None
+BreakBeforeBraces: Custom
+BreakConstructorInitializersBeforeComma: true
+BreakConstructorInitializers: BeforeColon
+BreakAfterJavaFieldAnnotations: false
+BreakBeforeInheritanceComma: false
+BreakBeforeTernaryOperators: true
+BreakStringLiterals: true
+BinPackArguments: false
+BinPackParameters: false
+BraceWrapping:   
+  AfterClass:      true
+  AfterControlStatement: true
+  AfterEnum:       true
+  AfterFunction:   true
+  AfterNamespace:  true
+  AfterObjCDeclaration: true
+  AfterStruct:     true
+  AfterUnion:      true
+  AfterExternBlock: true
+  BeforeCatch:     true
+  BeforeElse:      true
+  IndentBraces:    false
+  SplitEmptyFunction: true
+  SplitEmptyRecord: true
+  SplitEmptyNamespace: true  
+ConstructorInitializerAllOnOneLineOrOnePerLine: true
+
+# Indentation Offsets
+AccessModifierOffset: -4
+AlignAfterOpenBracket: AlwaysBreak
+AlignConsecutiveAssignments: false
+AlignConsecutiveDeclarations: false
+AlignEscapedNewlines: DontAlign
+AlignOperands: true
+AlignTrailingComments: true
+ConstructorInitializerIndentWidth: 4
+ContinuationIndentWidth: 4
+Cpp11BracedListStyle: true
+IndentCaseLabels: false
+IndentPPDirectives: None
+IndentWidth: 4
+IndentWrappedFunctionNames: false
+NamespaceIndentation: None
+
+# Other features
+FixNamespaceComments: true
+
+# Penalties
+PenaltyReturnTypeOnItsOwnLine: 10000
+
+# Include Order
+SortIncludes: true
+IncludeBlocks: Regroup
+IncludeCategories:
+  - Regex:           '^["<][Ss]td[Aa]fx'
+    Priority:        -1
+  - Regex:           '^["<](gtest|gmock)'
+    Priority:        0
+  - Regex:           '^["<]\.\./'
+    Priority:        1
+  - Regex:           '^["<]MFDApp/'
+    Priority:        10
+  - Regex:           '^["<]TestApp/'
+    Priority:        11
+  - Regex:           '^["<]MFDUI/'
+    Priority:        12
+  - Regex:           '^["<]Widgets/'
+    Priority:        13
+  - Regex:           '^["<]Simulator/'
+    Priority:        14
+  - Regex:           '^["<]GoFree/'
+    Priority:        15
+  - Regex:           '^["<]MFDUtils/'
+    Priority:        16
+  - Regex:           '^["<]QmlApplicationSystem/'
+    Priority:        17
+  - Regex:           '^["<]QmlApplicationAPI/'
+    Priority:        18
+  - Regex:           '^["<]InstrumentApp/'
+    Priority:        30
+  - Regex:           '^["<]InstrumentAppUI/'
+    Priority:        31
+  - Regex:           '^["<]InstrumentUtils/'
+    Priority:        32
+  - Regex:           '^["<]Pro(Radar|Sonar)App/'
+    Priority:        40
+  - Regex:           '^["<]ProAppCommon/'
+    Priority:        41
+  - Regex:           '^["<]Pro(Radar|Sonar)?UI/'
+    Priority:        42
+  - Regex:           '^["<]MercuryGatewayApp/'
+    Priority:        50
+  - Regex:           '^["<]NavionicsDemo/'
+    Priority:        51
+  - Regex:           '^["<]ChartingTestApp/'
+    Priority:        52
+  - Regex:           '^["<]InstrumentUI/'
+    Priority:        60
+  - Regex:           '^["<]MercuryUI/'
+    Priority:        61
+  - Regex:           '^["<]YamahaUI/'
+    Priority:        62
+  - Regex:           '^["<](Radar|Sonar)UI/'
+    Priority:        63 
+  - Regex:           '^["<]ChartingUI/'
+    Priority:        64    
+  - Regex:           '^["<]AutopilotUI/'
+    Priority:        65
+  - Regex:           '^["<]DataUI/'
+    Priority:        66
+  - Regex:           '^["<]TracksUI/'
+    Priority:        67
+  - Regex:           '^["<]AIS/'
+    Priority:        68
+  - Regex:           '^["<]GRIBWeather/'
+    Priority:        69
+  - Regex:           '^["<]SiriusXM/'
+    Priority:        70
+  - Regex:           '^["<]JeppesenCharting/'
+    Priority:        71
+  - Regex:           '^["<]NavicoCharting/'
+    Priority:        72
+  - Regex:           '^["<]BrowserBlink/'
+    Priority:        73
+  - Regex:           '^["<]Sonar3D/'
+    Priority:        74
+  - Regex:           '^["<]StructureMap/'
+    Priority:        75
+  - Regex:           '^["<]SonarClient/'
+    Priority:        76
+  - Regex:           '^["<]GoFreeRegistration/'
+    Priority:        77
+  - Regex:           '^["<]QuickUI/'
+    Priority:        90
+  - Regex:           '^["<]UI/'
+    Priority:        91
+  - Regex:           '^["<]BlackBoxSonarApp/'
+    Priority:        100
+  - Regex:           '^["<]MercuryBlackBoxApp/'
+    Priority:        101
+  - Regex:           '^["<]DataTransferManager/'
+    Priority:        110
+  - Regex:           '^["<]GoFreeUnlock/'
+    Priority:        111
+  - Regex:           '^["<]CZone/'
+    Priority:        112
+  - Regex:           '^["<]SuzukiData/'
+    Priority:        113
+  - Regex:           '^["<]MercuryData/'
+    Priority:        114
+  - Regex:           '^["<]EvinrudeData/'
+    Priority:        115
+  - Regex:           '^["<]InstrumentData/'
+    Priority:        116
+  - Regex:           '^["<]SailingData/'
+    Priority:        117
+  - Regex:           '^["<]Alarms/'
+    Priority:        118
+  - Regex:           '^["<]FusionControl/'
+    Priority:        119
+  - Regex:           '^["<]RadarMarpa/'
+    Priority:        120
+  - Regex:           '^["<]RadarControl/'
+    Priority:        121
+  - Regex:           '^["<]Autopilot/'
+    Priority:        122
+  - Regex:           '^["<]SonarData/'
+    Priority:        123
+  - Regex:           '^["<]Sonar/'
+    Priority:        124
+  - Regex:           '^["<]SonarNetworkInterface/'
+    Priority:        125
+  - Regex:           '^["<]DataImportExport/'
+    Priority:        126
+  - Regex:           '^["<]DigitalData/'
+    Priority:        127
+  - Regex:           '^["<]SonarServer/'
+    Priority:        128
+  - Regex:           '^["<]SonarHAL/'
+    Priority:        129
+  - Regex:           '^["<]SonarASP2/'
+    Priority:        130
+  - Regex:           '^["<]SonarDSP/'
+    Priority:        131
+  - Regex:           '^["<]SonarCommon/'
+    Priority:        132
+  - Regex:           '^["<]ProductConfig/'
+    Priority:        140
+  - Regex:           '^["<]HAL/'
+    Priority:        141
+  - Regex:           '^["<]Tracks/'
+    Priority:        142
+  - Regex:           '^["<]ProUserData/'
+    Priority:        150
+  - Regex:           '^["<]UserData/'
+    Priority:        151
+  - Regex:           '^["<]At5Server/'
+    Priority:        152
+  - Regex:           '^["<]VideoControl/'
+    Priority:        153
+  - Regex:           '^["<]Network/'
+    Priority:        154
+  - Regex:           '^["<]NativeWindow/'
+    Priority:        155
+  - Regex:           '^["<]RenderSystem/'
+    Priority:        156
+  - Regex:           '^["<]Mapping/'
+    Priority:        157
+  - Regex:           '^["<]Alerts/'
+    Priority:        158
+  - Regex:           '^["<]CoreAlarms/'
+    Priority:        159
+  - Regex:           '^["<]RadarPPI/'
+    Priority:        160
+  - Regex:           '^["<]BridgeControl/'
+    Priority:        161
+  - Regex:           '^["<]Utils/'
+    Priority:        162
+  - Regex:           '^["<]GisCommon/'
+    Priority:        163
+  - Regex:           '^["<]Bluetooth/'
+    Priority:        164
+  - Regex:           '^["<]MathLib/'
+    Priority:        165
+  - Regex:           '^["<]Core/'
+    Priority:        166
+  - Regex:           '^["<]Ndp2k/SystemData/'
+    Priority:        167
+  - Regex:           '^["<]Ndp2kCore/'
+    Priority:        168
+  - Regex:           '^["<]Ndp2kNmea2kCore/'
+    Priority:        169
+  - Regex:           '^["<]Ndp2kHal/'
+    Priority:        170
+  - Regex:           '^["<]Ndp2kCommon/'
+    Priority:        171
+  - Regex:           '^["<]At5Lib/'
+    Priority:        172
+  - Regex:           '^["<]ThirdParty/'
+    Priority:        173
+  # C++ Utilities
+  - Regex:           '^[<](typeinfo|typeindex|type_traits|bitset|functional|utility|chrono|initializer_list|tuple|any|optional|variant)'
+    Priority:        180
+  # C++ Dynamic memory management
+  - Regex:           '^[<](new|memory|scoped_allocator|memory_resource)[">]$'
+    Priority:        181
+  # C++ Numeric limits and Error handling
+  - Regex:           '^[<](limits|exception|stdexcept|system_error)[">]$'
+    Priority:        182
+  # C++ Strings and Containers libraries
+  - Regex:           '^[<](string|string_view|array|vector|deque|list|forward_list|set|map|unordered_set|unordered_map|stack|queue)'
+    Priority:        183
+  # C++ versions of C libraries
+  - Regex:           '^[<]c(complex|errno|fenv|float|inttypes|iso646|limits|locale|math|setjmp|signal|stdalign|stdarg|stdatomic|stdbool|stddef|stdint|stdio|stdlib|stdnoreturn|string|tgmath|threads|time|uchar|wchar|wctype)'
+    Priority:        190
+  # C libraries
+  - Regex:           '^[<](complex|errno|fenv|float|inttypes|iso646|limits|locale|math|setjmp|signal|stdalign|stdarg|stdatomic|stdbool|stddef|stdint|stdio|stdlib|stdnoreturn|string|tgmath|threads|time|uchar|wchar|wctype)\.h'
+    Priority:        191
+  # Boost libraries
+  - Regex:           '^[<]boost/'
+    Priority:        192
+  # Qt libraries
+  - Regex:           '^[<]Q[A-Z][A-Za-z]'
+    Priority:        200
+  - Regex:           '^[<]Qt[A-Z][A-Za-z]'
+    Priority:        201
+  # Other libraries
+  - Regex:           '^["<].*[*>]$'
+    Priority:        202
+  - Regex:           '^.*$'
+    Priority:        1
+
+    

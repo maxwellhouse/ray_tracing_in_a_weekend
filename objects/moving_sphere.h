@@ -5,7 +5,8 @@ class moving_sphere : public object
 {
 public:
     moving_sphere() {}
-    moving_sphere(const vec3& cen0, const vec3& cen1, const float t0, const float t1, const float r, material* pMat) : center0(cen0), center1(cen1), time0(t0), time1(t1)
+    moving_sphere(const vec3& cen0, const vec3& cen1, const float t0, const float t1, const float r, material* pMat)
+        : center0(cen0), center1(cen1), time0(t0), time1(t1)
     {
         radius = r;
         pMaterial = pMat;
@@ -24,7 +25,7 @@ private:
 
 vec3 moving_sphere::centerAtTime(float time) const
 {
-    return center0 + ((time - time0) / (time1 - time0))* (center1 - center0);
+    return center0 + ((time - time0) / (time1 - time0)) * (center1 - center0);
 }
 
 bool moving_sphere::bounding_box(const float t0, const float t1, aabb& box) const
@@ -46,10 +47,10 @@ bool moving_sphere::hit(const ray& r, const float t_min, const float t_max, hit_
     float b = dot(oc, r.direction());
     float c = dot(oc, oc) - radius * radius;
     float discriminant = b * b - a * c;
-    if (discriminant > 0) 
+    if (discriminant > 0)
     {
         float temp = (-b - sqrt(discriminant)) / a;
-        if (temp < t_max && temp > t_min) 
+        if (temp < t_max && temp > t_min)
         {
             rec.t = temp;
             rec.p = r.point_at_parameter(rec.t);
@@ -58,7 +59,7 @@ bool moving_sphere::hit(const ray& r, const float t_min, const float t_max, hit_
             return true;
         }
         temp = (-b + sqrt(discriminant)) / a;
-        if (temp < t_max && temp > t_min) 
+        if (temp < t_max && temp > t_min)
         {
             rec.t = temp;
             rec.p = r.point_at_parameter(rec.t);
