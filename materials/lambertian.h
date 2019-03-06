@@ -2,16 +2,6 @@
 #include "../textures/texture.h"
 #include "material.h"
 
-vec3 random_in_unit_sphere()
-{
-    vec3 p;
-    do
-    {
-        p = 2.0 * vec3(math::rand(), math::rand(), math::rand()) - vec3(1.0f, 1.0f, 1.0f);
-    } while (dot(p, p) >= 1.0);
-    return p;
-}
-
 class Lambertian : public material
 {
 public:
