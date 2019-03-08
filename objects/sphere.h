@@ -33,7 +33,7 @@ bool sphere::hit(const ray& r, const float t_min, const float t_max, hit_record&
     float discriminant = b * b - a * c;
     if (discriminant > 0)
     {
-        float temp = (-b - sqrt(b * b - a * c)) / a;
+        float temp = (-b - math::fastSquareRoot(b * b - a * c)) / a;
         if (temp < t_max && temp > t_min)
         {
             rec.t = temp;
@@ -43,7 +43,7 @@ bool sphere::hit(const ray& r, const float t_min, const float t_max, hit_record&
             rec.pMaterial = pMaterial;
             return true;
         }
-        temp = (-b + sqrt(b * b - a * c)) / a;
+        temp = (-b + math::fastSquareRoot(b * b - a * c)) / a;
         if (temp < t_max && temp > t_min)
         {
             rec.t = temp;

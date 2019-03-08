@@ -1,11 +1,11 @@
 #define STB_IMAGE_WRITE_IMPLEMENTATION
 #include "include/stb/stb_image_write.h"
-
 #define STB_IMAGE_IMPLEMENTATION
-#include "camera.h"
 #include "include/stb/stb_image.h"
+
 #pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Wmicrosoft-include"
+#include "camera.h"
 #include "materials/dielectric.h"
 #include "materials/diffuse_light.h"
 #include "materials/lambertian.h"
@@ -30,6 +30,7 @@
 
 vec3 linear_interp_color(const ray& r, const object* obj, const int depth)
 {
+    vec3 color(0.0f, 0.0f, 0.0f);
     hit_record rec;
     if (obj->hit(r, 0.001f, std::numeric_limits<float>::max(), rec))
     {
@@ -38,15 +39,15 @@ vec3 linear_interp_color(const ray& r, const object* obj, const int depth)
         vec3 emitted = rec.pMaterial->emitted(rec.u, rec.v, rec.p);
         if (depth < 50 && rec.pMaterial->scatter(r, rec, attenuation, scattered))
         {
-            return emitted + attenuation * linear_interp_color(scattered, obj, depth + 1);
+            color += emitted + attenuation * linear_interp_color(scattered, obj, depth + 1);
         }
         else
         {
-            return emitted;
+            color += emitted;
         }
     }
 
-    return vec3(0, 0, 0);
+    return color;
 }
 
 object* make_random_world()
@@ -170,13 +171,13 @@ object* make_textured_sphere()
 
 object* make_simple_light()
 {
-    int num_objects = 3;
-    texture* pPerlinTexture = new noise_texture(true);
+    int num_objects = 2;
+    //texture* pPerlinTexture = new noise_texture(true);
     object** pList = new object*[num_objects];
-    pList[0] = new sphere(vec3(0, -1000, 0), 1000, new Lambertian(pPerlinTexture));
-    pList[1] = new sphere(vec3(0, 2, 0), 2, new Lambertian(pPerlinTexture));
-    pList[2] = new sphere(vec3(0, 7, 0), 2, new diffuse_light(new constant_texture(vec3(10, 10, 10))));
-    //pList[3] = new aa_rectangle(3, 5, 1, 3, -2, new diffuse_light(new constant_texture(vec3(10, 10, 10))));
+    //pList[0] = new sphere(vec3(0, -1000, 0), 1000, new Lambertian(new constant_texture(vec3(10, 10, 10))));
+    pList[0] = new sphere(vec3(0, 2, 0), 2, new Lambertian(new constant_texture(vec3(5, 5, 5))));
+    //pList[2] = new sphere(vec3(0, 7, 0), 2, new diffuse_light(new constant_texture(vec3(10, 10, 10))));
+    pList[1] = new aa_rectangle(3, 5, 1, 3, -2, new diffuse_light(new constant_texture(vec3(10, 10, 10))));
 
     return new object_list(pList, num_objects);
 }
@@ -223,7 +224,7 @@ int main()
                 color += linear_interp_color(r, obj_list, 0);
             }
             color /= ns;
-            color = vec3(sqrtf(color[0]), sqrtf(color[1]), sqrtf(color[2]));
+            color = vec3(math::fastSquareRoot(color[0]), math::fastSquareRoot(color[1]), math::fastSquareRoot(color[2]));
             auto ir = uint8_t(255.99f * color.r());
             auto ig = uint8_t(255.99f * color.g());
             auto ib = uint8_t(255.99f * color.b());

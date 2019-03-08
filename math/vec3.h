@@ -12,17 +12,17 @@ public:
         e[1] = y;
         e[2] = z;
     }
-    constexpr float x() const { return e[0]; }
-    constexpr float y() const { return e[1]; }
-    constexpr float z() const { return e[2]; }
-    constexpr float r() const { return e[0]; }
-    constexpr float g() const { return e[1]; }
-    constexpr float b() const { return e[2]; }
+    inline constexpr float x() const { return e[0]; }
+    inline constexpr float y() const { return e[1]; }
+    inline constexpr float z() const { return e[2]; }
+    inline constexpr float r() const { return e[0]; }
+    inline constexpr float g() const { return e[1]; }
+    inline constexpr float b() const { return e[2]; }
 
     inline vec3 operator-() const { return vec3(-e[0], -e[1], -e[2]); }
-    constexpr float operator[](int i) const { return e[i]; }
-    constexpr inline float& operator[](int i) { return e[i]; }
-    bool operator==(const vec3& other) const;
+    inline constexpr float operator[](int i) const { return e[i]; }
+    inline constexpr float& operator[](int i) { return e[i]; }
+    inline bool operator==(const vec3& other) const;
 
     inline vec3& operator+=(const vec3& v2);
     inline vec3& operator-=(const vec3& v2);
@@ -31,8 +31,8 @@ public:
     inline vec3& operator*=(const float l);
     inline vec3& operator/=(const float l);
 
-    constexpr float squared_length() const { return e[0] * e[0] + e[1] * e[1] + e[2] * e[2]; }
-    inline float length() const { return sqrtf(squared_length()); }
+    inline constexpr float squared_length() const { return e[0] * e[0] + e[1] * e[1] + e[2] * e[2]; }
+    inline float length() const { return math::fastSquareRoot(squared_length()); }
 
     inline void make_unit_vector();
 
@@ -42,10 +42,10 @@ private:
 
 inline void vec3::make_unit_vector()
 {
-    float t = 1 / length();
-    e[0] *= t;
-    e[1] *= t;
-    e[2] *= t;
+    float k = 1.0f / length();
+    e[0] *= k;
+    e[1] *= k;
+    e[2] *= k;
 }
 
 inline vec3& vec3::operator+=(const vec3& v2)

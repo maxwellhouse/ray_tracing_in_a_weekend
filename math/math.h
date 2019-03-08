@@ -151,6 +151,18 @@ constexpr float fastFloatSin(int Angle)
     return (fastFloatCos(Angle - 90));
 }
 
+float fastSquareRoot(float x)
+{
+    unsigned int i = *(unsigned int*)&x;
+
+    // adjust bias
+    i += 127 << 23;
+    // approximation of square root
+    i >>= 1;
+
+    return *(float*)&i;
+}
+
 template <class T>
 T clamp(const T& value, const T& lowerLimit, const T& upperLimit)
 {

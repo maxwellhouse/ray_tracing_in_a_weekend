@@ -49,7 +49,7 @@ bool moving_sphere::hit(const ray& r, const float t_min, const float t_max, hit_
     float discriminant = b * b - a * c;
     if (discriminant > 0)
     {
-        float temp = (-b - sqrt(discriminant)) / a;
+        float temp = (-b - math::fastSquareRoot(discriminant)) / a;
         if (temp < t_max && temp > t_min)
         {
             rec.t = temp;
@@ -58,7 +58,7 @@ bool moving_sphere::hit(const ray& r, const float t_min, const float t_max, hit_
             rec.pMaterial = pMaterial;
             return true;
         }
-        temp = (-b + sqrt(discriminant)) / a;
+        temp = (-b + math::fastSquareRoot(discriminant)) / a;
         if (temp < t_max && temp > t_min)
         {
             rec.t = temp;

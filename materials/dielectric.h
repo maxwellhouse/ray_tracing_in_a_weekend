@@ -11,7 +11,7 @@ bool refract(const vec3& v, const vec3& normal, float ni_over_nt, vec3& refracte
     float discriminant = 1.0f - ni_over_nt * ni_over_nt * (1.0f - dt * dt);
     if (discriminant > 0.0f)
     {
-        refracted = ni_over_nt * (uv - normal * dt) - normal * sqrtf(discriminant);
+        refracted = ni_over_nt * (uv - normal * dt) - normal * math::fastSquareRoot(discriminant);
         ret = true;
     }
     return ret;
