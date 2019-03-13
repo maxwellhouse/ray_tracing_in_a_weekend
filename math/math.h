@@ -5,7 +5,7 @@ namespace math
 {
 static constexpr float PI = 3.14159265358979323846f;
 static constexpr float TOLERANCE = 1e-06f;
-std::uniform_real_distribution<float> distribution(0.0f, 1.0f);
+std::uniform_real_distribution<float> distribution(0.0f, 0.99999f);
 
 std::random_device rd;            //Will be used to obtain a seed for the random number engine
 std::mt19937 random_number(rd()); //Standard mersenne_twister_engine seeded with rd()
@@ -149,18 +149,6 @@ constexpr float fastFloatCos(int Angle)
 constexpr float fastFloatSin(int Angle)
 {
     return (fastFloatCos(Angle - 90));
-}
-
-float fastSquareRoot(float x)
-{
-    unsigned int i = *(unsigned int*)&x;
-
-    // adjust bias
-    i += 127 << 23;
-    // approximation of square root
-    i >>= 1;
-
-    return *(float*)&i;
 }
 
 template <class T>

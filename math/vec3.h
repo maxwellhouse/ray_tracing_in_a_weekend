@@ -32,7 +32,7 @@ public:
     inline vec3& operator/=(const float l);
 
     inline constexpr float squared_length() const { return e[0] * e[0] + e[1] * e[1] + e[2] * e[2]; }
-    inline float length() const { return math::fastSquareRoot(squared_length()); }
+    inline float length() const { return std::sqrt(squared_length()); }
 
     inline void make_unit_vector();
 

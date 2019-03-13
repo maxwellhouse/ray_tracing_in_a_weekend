@@ -22,7 +22,7 @@ set(
     math/vec3.h
     math/perlin_noise.h
     
-	objects/aa_rectangle.h
+	objects/rectangle.h
     objects/aabb.h
     objects/bvh_node.h
     objects/moving_sphere.h

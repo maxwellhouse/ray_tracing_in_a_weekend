@@ -13,10 +13,10 @@
 #include "materials/metal.h"
 #include "math/ray.h"
 #include "math/vec3.h"
-#include "objects/aa_rectangle.h"
 #include "objects/bvh_node.h"
 #include "objects/moving_sphere.h"
 #include "objects/object_list.h"
+#include "objects/rectangle.h"
 #include "objects/sphere.h"
 #include "textures/checker_texture.h"
 #include "textures/constant_texture.h"
@@ -30,7 +30,6 @@
 
 vec3 linear_interp_color(const ray& r, const object* obj, const int depth)
 {
-    vec3 color(0.0f, 0.0f, 0.0f);
     hit_record rec;
     if (obj->hit(r, 0.001f, std::numeric_limits<float>::max(), rec))
     {
@@ -39,15 +38,15 @@ vec3 linear_interp_color(const ray& r, const object* obj, const int depth)
         vec3 emitted = rec.pMaterial->emitted(rec.u, rec.v, rec.p);
         if (depth < 50 && rec.pMaterial->scatter(r, rec, attenuation, scattered))
         {
-            color += emitted + attenuation * linear_interp_color(scattered, obj, depth + 1);
+            return emitted + attenuation * linear_interp_color(scattered, obj, depth + 1);
         }
         else
         {
-            color += emitted;
+            return emitted;
         }
     }
 
-    return color;
+    return vec3(0, 0, 0);
 }
 
 object* make_random_world()
@@ -171,13 +170,29 @@ object* make_textured_sphere()
 
 object* make_simple_light()
 {
-    int num_objects = 2;
-    //texture* pPerlinTexture = new noise_texture(true);
-    object** pList = new object*[num_objects];
-    //pList[0] = new sphere(vec3(0, -1000, 0), 1000, new Lambertian(new constant_texture(vec3(10, 10, 10))));
-    pList[0] = new sphere(vec3(0, 2, 0), 2, new Lambertian(new constant_texture(vec3(5, 5, 5))));
-    //pList[2] = new sphere(vec3(0, 7, 0), 2, new diffuse_light(new constant_texture(vec3(10, 10, 10))));
-    pList[1] = new aa_rectangle(3, 5, 1, 3, -2, new diffuse_light(new constant_texture(vec3(10, 10, 10))));
+    int num_objects = 4;
+    auto pList = new object*[num_objects];
+    auto pPerlinTexture = new noise_texture(true, 4.0f);
+    pList[0] = new sphere(vec3(0, -1000, 0), 1000, new Lambertian(pPerlinTexture));
+    pList[1] = new sphere(vec3(0, 2, 0), 2, new Lambertian(pPerlinTexture));
+    pList[2] = new sphere(vec3(0, 7, 0), 2, new diffuse_light(new constant_texture(vec3(4, 4, 4))));
+    pList[3] = new xy_rectangle(3, 5, 1, 3, -2, new diffuse_light(new constant_texture(vec3(4, 4, 4))));
+    return new object_list(pList, num_objects);
+}
+
+object* make_cornell_box()
+{
+    int num_objects = 5;
+    auto pList = new object*[num_objects];
+    material* pRed = new Lambertian(new constant_texture(vec3(0.65f, 0.05f, 0.05f)));
+    material* pWhite = new Lambertian(new constant_texture(vec3(0.73f, 0.73f, 0.73f)));
+    material* pGreen = new Lambertian(new constant_texture(vec3(0.12f, 0.45f, 0.15f)));
+    material* pLight = new diffuse_light(new constant_texture(vec3(15.0f, 15.0f, 15.0f)));
+    pList[0] = new yz_rectangle(0.0f, 555.0f, 0.0f, 555.0f, 555.0f, pGreen);
+    pList[1] = new yz_rectangle(0.0f, 555.0f, 0.0f, 555.0f, 0.0f, pRed);
+    pList[2] = new xz_rectangle(213.0f, 343.0f, 227.0f, 332.0f, 554.0f, pLight);
+    pList[3] = new xz_rectangle(0.0f, 555.0f, 0.0f, 555.0f, 0.0f, pWhite);
+    pList[4] = new xy_rectangle(0.0f, 555.0f, 0.0f, 555.0f, 555.0f, pWhite);
 
     return new object_list(pList, num_objects);
 }
@@ -185,8 +200,8 @@ object* make_simple_light()
 int main()
 {
     const int width = 800;
-    const int height = 600;
-    const float ns = 10.0f;
+    const int height = 800;
+    const float num_samples = 100.0f;
     int comp = 3;
     std::vector<uint8_t> image;
     const int bitsPerPixel = comp * (8 * sizeof(uint8_t));
@@ -198,24 +213,26 @@ int main()
     //object* obj_list = make_test_world();
     //object* obj_list = make_random_world();
     //object* obj_list = make_textured_sphere();
-    object* obj_list = make_simple_light();
+    //object* obj_list = make_simple_light();
+    object* obj_list = make_cornell_box();
 
-    vec3 lookfrom(0.0f, 2.0f, 10.0f);
-    vec3 lookat(0.0f, 0.0f, 0.0f);
+    //vec3 lookfrom(0.0f, 2.0f, 10.0f);
+    //vec3 lookat(0.0f, 0.0f, 0.0f);
+    vec3 lookfrom(278.0f, 278.0f, -800.0f);
+    vec3 lookat(278.0f, 278.0f, 0.0f);
     float dist_to_focus = 10.0f;
     float aperture = 0.0f;
     float fov = 40.0f;
 
-    camera cam(lookfrom, lookat, vec3(0, 1, 0), fov, float(width) / float(height), aperture, dist_to_focus, 0.0f, 0.0f);
+    camera cam(lookfrom, lookat, vec3(0, 1, 0), fov, float(width) / float(height), aperture, dist_to_focus, 0.0, 1.0);
 
     std::chrono::steady_clock::time_point t1 = std::chrono::steady_clock::now();
     for (int j = height - 1; j >= 0; j--)
     {
-        //std::cout << j << "\n";
         for (int i = 0; i < width; i++)
         {
             vec3 color(0.0f, 0.0f, 0.0f);
-            for (int s = 0; s < ns; s++)
+            for (int s = 0; s < num_samples; s++)
             {
                 float u = float(i + math::rand()) / float(width);
                 float v = float(j + math::rand()) / float(height);
@@ -223,8 +240,8 @@ int main()
 
                 color += linear_interp_color(r, obj_list, 0);
             }
-            color /= ns;
-            color = vec3(math::fastSquareRoot(color[0]), math::fastSquareRoot(color[1]), math::fastSquareRoot(color[2]));
+            color /= num_samples;
+            color = vec3(std::sqrt(color[0]), std::sqrt(color[1]), std::sqrt(color[2]));
             auto ir = uint8_t(255.99f * color.r());
             auto ig = uint8_t(255.99f * color.g());
             auto ib = uint8_t(255.99f * color.b());

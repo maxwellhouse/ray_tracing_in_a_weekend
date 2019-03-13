@@ -33,22 +33,22 @@ bool sphere::hit(const ray& r, const float t_min, const float t_max, hit_record&
     float discriminant = b * b - a * c;
     if (discriminant > 0)
     {
-        float temp = (-b - math::fastSquareRoot(b * b - a * c)) / a;
+        float temp = (-b - std::sqrt(b * b - a * c)) / a;
         if (temp < t_max && temp > t_min)
         {
             rec.t = temp;
             rec.p = r.point_at_parameter(rec.t);
-            sphere::get_sphere_uv((rec.p - center) / radius, rec.u, rec.v);
+            get_sphere_uv((rec.p - center) / radius, rec.u, rec.v);
             rec.normal = (rec.p - center) / radius;
             rec.pMaterial = pMaterial;
             return true;
         }
-        temp = (-b + math::fastSquareRoot(b * b - a * c)) / a;
+        temp = (-b + sqrt(b * b - a * c)) / a;
         if (temp < t_max && temp > t_min)
         {
             rec.t = temp;
             rec.p = r.point_at_parameter(rec.t);
-            sphere::get_sphere_uv((rec.p - center) / radius, rec.u, rec.v);
+            get_sphere_uv((rec.p - center) / radius, rec.u, rec.v);
             rec.normal = (rec.p - center) / radius;
             rec.pMaterial = pMaterial;
             return true;

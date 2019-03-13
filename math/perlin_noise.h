@@ -12,7 +12,7 @@ public:
     float turbulence(const vec3& p, int depth = 7) const;
 
 private:
-    float trilinear_interpolate(vec3 c[2][2][2], float u, float v, float w) const;
+    float perlin_interp(vec3 c[2][2][2], float u, float v, float w) const;
 
     static vec3* ranVec;
     static int* perm_x;
@@ -47,7 +47,7 @@ float perlin::noise_trilinear_interpolation(const vec3& p) const
         for (int dj = 0; dj < 2; dj++)
             for (int dk = 0; dk < 2; dk++)
                 c[di][dj][dk] = ranVec[perm_x[(i + di) & 255] ^ perm_y[(j + dj) & 255] ^ perm_z[(k + dk) & 255]];
-    return trilinear_interpolate(c, u, v, w);
+    return perlin_interp(c, u, v, w);
 }
 
 vec3 perlin::noise_no_interpolation(const vec3& p) const
@@ -58,7 +58,7 @@ vec3 perlin::noise_no_interpolation(const vec3& p) const
     return ranVec[perm_x[i] ^ perm_y[j] ^ perm_z[k]];
 }
 
-float perlin::trilinear_interpolate(vec3 c[2][2][2], float u, float v, float w) const
+float perlin::perlin_interp(vec3 c[2][2][2], float u, float v, float w) const
 {
     float uu = u * u * (3 - 2 * u);
     float vv = v * v * (3 - 2 * v);
