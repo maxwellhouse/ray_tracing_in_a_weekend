@@ -1,9 +1,6 @@
 #pragma once
 
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wmicrosoft-include"
 #include "math/ray.h"
-#pragma clang diagnostic pop
 #include "objects/object.h"
 
 vec3 random_in_unit_sphere()

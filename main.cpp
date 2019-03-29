@@ -3,8 +3,6 @@
 #define STB_IMAGE_IMPLEMENTATION
 #include "stb/stb_image.h"
 
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wmicrosoft-include"
 #include "camera.h"
 #include "materials/dielectric.h"
 #include "materials/diffuse_light.h"
@@ -22,10 +20,8 @@
 #include "textures/constant_texture.h"
 #include "textures/image_texture.h"
 #include "textures/noise_texture.h"
-#pragma clang diagnostic pop
 
 #include <chrono>
-
 #include <iostream>
 
 vec3 linear_interp_color(const ray& r, const object* obj, const int depth)
