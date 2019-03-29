@@ -2,12 +2,11 @@ cmake_minimum_required(VERSION 3.13)
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11")
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
 
-project("Ray tracing in a weekend")
+project("raytracer")
 
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
 
-set(
-    source_list
+add_executable( raytracer
     main.cpp
     camera.h
     
@@ -37,20 +36,9 @@ set(
     textures/texture.h
 )
 
-add_executable(raytracer ${source_list})
-
-foreach(source IN LISTS source_list)
-    get_filename_component(source_path "${source}" PATH)
-    string(REPLACE "/" "\\" source_path_msvc "${source_path}")
-    source_group("${source_path_msvc}" FILES "${source}")
-endforeach()
-    
 target_include_directories(raytracer
     PRIVATE
-        ../materials
-        ../math
-        ../objects
-        ../textures
+        ./thirdparty/
 )
 
 if(LINUX)
