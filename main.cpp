@@ -1,7 +1,7 @@
 #define STB_IMAGE_WRITE_IMPLEMENTATION
-#include "include/stb/stb_image_write.h"
+#include "stb/stb_image_write.h"
 #define STB_IMAGE_IMPLEMENTATION
-#include "include/stb/stb_image.h"
+#include "stb/stb_image.h"
 
 #pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Wmicrosoft-include"
