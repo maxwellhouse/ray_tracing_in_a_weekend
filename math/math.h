@@ -114,9 +114,11 @@ const float FloatCosTable[] = {
     0,          //  90  Degrees
 };
 
-constexpr float fastFloatCos(int Angle)
+float fastFloatCos(int Angle)
 {
     assert(Angle < 360 * 3 && Angle > -360 * 3);
+
+    float ret = 0.0f;
 
     while (Angle >= 360)
     {
@@ -130,23 +132,24 @@ constexpr float fastFloatCos(int Angle)
 
     if (Angle <= 90)
     {
-        return (FloatCosTable[Angle]);
+        ret = (FloatCosTable[Angle]);
     }
     else if (Angle <= 180)
     {
-        return (-FloatCosTable[180 - Angle]);
+        ret =  (-FloatCosTable[180 - Angle]);
     }
     else if (Angle <= 270)
     {
-        return (-FloatCosTable[Angle - 180]);
+        ret = (-FloatCosTable[Angle - 180]);
     }
     else
     {
-        return (FloatCosTable[360 - Angle]);
+        ret = (FloatCosTable[360 - Angle]);
     }
+    return ret;    
 }
 
-constexpr float fastFloatSin(int Angle)
+float fastFloatSin(int Angle)
 {
     return (fastFloatCos(Angle - 90));
 }

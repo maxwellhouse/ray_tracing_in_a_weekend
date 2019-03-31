@@ -21,6 +21,7 @@ add_executable( raytracer
     math/vec3.h
     math/perlin_noise.h
     
+    objects/flip_normals.h
 	objects/rectangle.h
     objects/aabb.h
     objects/bvh_node.h

@@ -16,6 +16,7 @@
 #include "objects/object_list.h"
 #include "objects/rectangle.h"
 #include "objects/sphere.h"
+#include "objects/flip_normals.h"
 #include "textures/checker_texture.h"
 #include "textures/constant_texture.h"
 #include "textures/image_texture.h"
@@ -49,8 +50,9 @@ object* make_random_world()
 {
     int i = 0;
     int num_objects = 11;
+    material* pLight = new diffuse_light(new constant_texture(vec3(15.0f, 15.0f, 15.0f)));
     auto pList = new object*[482];
-    pList[i++] = new sphere(vec3(0, -1000, 0), 1000, new Lambertian(new constant_texture(vec3(0.5f, 0.5f, 0.5f))));
+    pList[i++] = new sphere(vec3(0, -1000, 0), 1000, pLight);
 
     for (int a = -num_objects; a < num_objects; a++)
     {
@@ -178,17 +180,19 @@ object* make_simple_light()
 
 object* make_cornell_box()
 {
-    int num_objects = 5;
+    int num_objects = 6;
     auto pList = new object*[num_objects];
     material* pRed = new Lambertian(new constant_texture(vec3(0.65f, 0.05f, 0.05f)));
     material* pWhite = new Lambertian(new constant_texture(vec3(0.73f, 0.73f, 0.73f)));
     material* pGreen = new Lambertian(new constant_texture(vec3(0.12f, 0.45f, 0.15f)));
     material* pLight = new diffuse_light(new constant_texture(vec3(15.0f, 15.0f, 15.0f)));
-    pList[0] = new yz_rectangle(0.0f, 555.0f, 0.0f, 555.0f, 555.0f, pGreen);
+    
+    pList[0] = new flip_normals(new yz_rectangle(0.0f, 555.0f, 0.0f, 555.0f, 555.0f, pGreen));
     pList[1] = new yz_rectangle(0.0f, 555.0f, 0.0f, 555.0f, 0.0f, pRed);
     pList[2] = new xz_rectangle(213.0f, 343.0f, 227.0f, 332.0f, 554.0f, pLight);
-    pList[3] = new xz_rectangle(0.0f, 555.0f, 0.0f, 555.0f, 0.0f, pWhite);
-    pList[4] = new xy_rectangle(0.0f, 555.0f, 0.0f, 555.0f, 555.0f, pWhite);
+    pList[3] = new flip_normals(new xz_rectangle(0.0f, 555.0f, 0.0f, 555.0f, 555.0f, pWhite));
+    pList[4] = new xz_rectangle(0.0f, 555.0f, 0.0f, 555.0f, 0.0f, pWhite);
+    pList[5] = new flip_normals(new xy_rectangle(0.0f, 555.0f, 0.0f, 555.0f, 555.0f, pWhite));
 
     return new object_list(pList, num_objects);
 }
@@ -225,6 +229,7 @@ int main()
     std::chrono::steady_clock::time_point t1 = std::chrono::steady_clock::now();
     for (int j = height - 1; j >= 0; j--)
     {
+        std::cout << j << std::endl;
         for (int i = 0; i < width; i++)
         {
             vec3 color(0.0f, 0.0f, 0.0f);

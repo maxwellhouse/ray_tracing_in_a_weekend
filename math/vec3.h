@@ -21,7 +21,7 @@ public:
 
     inline vec3 operator-() const { return vec3(-e[0], -e[1], -e[2]); }
     inline constexpr float operator[](int i) const { return e[i]; }
-    inline constexpr float& operator[](int i) { return e[i]; }
+    inline float& operator[](int i) { return e[i]; }
     inline bool operator==(const vec3& other) const;
 
     inline vec3& operator+=(const vec3& v2);
