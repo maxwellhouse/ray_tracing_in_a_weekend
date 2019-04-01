@@ -1,5 +1,8 @@
 #pragma once
 
+#include "glm/glm/vec3.hpp"
+#include "glm/glm/gtx/rotate_vector.hpp"
+
 #include "object.h"
 #include "math/math.h"
 
@@ -19,12 +22,10 @@ class rotate : public object
         float yDeg;
         float zDeg;
         aabb bbox;
-        float sin_theta;
-        float cos_theta;
         bool hasBox;
 };
 
-rotate::rotate(object* pObj, float x, float y, float z): pObject(pObj), xDeg(x), yDeg(y), zDeg(z), sin_theta(0.0f), cos_theta(0.0f), hasBox(false)
+rotate::rotate(object* pObj, float x, float y, float z): pObject(pObj), xDeg(x), yDeg(y), zDeg(z), hasBox(false)
 {
     rotate_y(y);
 }
@@ -32,23 +33,13 @@ rotate::rotate(object* pObj, float x, float y, float z): pObject(pObj), xDeg(x),
 bool rotate::hit(const ray& r, const float t_min, const float t_max, hit_record& rec) const
 {
     bool hit = false;
-    vec3 origin = r.origin();
-    vec3 direction = r.direction();
-    origin[0] = cos_theta*r.origin()[0] - sin_theta*r.origin()[2];
-    origin[2] =  sin_theta*r.origin()[0] + cos_theta*r.origin()[2];
-    direction[0] = cos_theta*r.direction()[0] - sin_theta*r.direction()[2];
-    direction[2] = sin_theta*r.direction()[0] + cos_theta*r.direction()[2];
+    glm::vec3 origin = glm::rotate(r.origin(), glm::radians(yDeg), glm::vec3(0, 1, 0));
+    glm::vec3 direction = glm::rotate(r.direction(), glm::radians(yDeg), glm::vec3(0, 1, 0));
     ray rotated_r(origin, direction, r.time());
     if(pObject->hit(rotated_r, t_min, t_max, rec))
     {
-        vec3 p = rec.p;
-        vec3 normal = rec.normal;
-        p[0] = cos_theta*rec.p[0] + sin_theta*rec.p[2];
-        p[2] = -sin_theta*rec.p[0] + cos_theta*rec.p[2];
-        normal[0] = cos_theta*rec.normal[0] + sin_theta*rec.normal[2];
-        normal[2] = -sin_theta*rec.normal[0] + cos_theta*rec.normal[2];
-        rec.p = p;
-        rec.normal = normal;
+        rec.p = glm::rotate(rec.p, glm::radians(yDeg), glm::vec3(0, 1, 0));
+        rec.normal = glm::rotate(rec.normal, glm::radians(yDeg), glm::vec3(0, 1, 0));
         hit = true;
     }
     return hit;
@@ -63,20 +54,20 @@ bool rotate::bounding_box(const float t0, const float t1, aabb& box) const
 void rotate::rotate_y(float angle)
 {
     float radians = (math::PI / 180.0f) * angle;
-    sin_theta = std::sin(radians);
-    cos_theta = std::sin(radians);
+    float sin_theta = std::sin(radians);
+    float cos_theta = std::sin(radians);
     hasBox = pObject->bounding_box(0.0f, 1.0f, bbox);
-    vec3 min(std::numeric_limits<float>::max(), std::numeric_limits<float>::max(), std::numeric_limits<float>::max());
-    vec3 max(std::numeric_limits<float>::min(), std::numeric_limits<float>::min(), std::numeric_limits<float>::min());
+    glm::vec3 min(std::numeric_limits<float>::max(), std::numeric_limits<float>::max(), std::numeric_limits<float>::max());
+    glm::vec3 max(std::numeric_limits<float>::min(), std::numeric_limits<float>::min(), std::numeric_limits<float>::min());
     for (int i = 0; i < 2; i++) {
         for (int j = 0; j < 2; j++) {
             for (int k = 0; k < 2; k++) {
-                float x = i*bbox.max().x() + (1-i)*bbox.min().x();
-                float y = j*bbox.max().y() + (1-j)*bbox.min().y();
-                float z = k*bbox.max().z() + (1-k)*bbox.min().z();
+                float x = i*bbox.max().x + (1-i)*bbox.min().x;
+                float y = j*bbox.max().y + (1-j)*bbox.min().y;
+                float z = k*bbox.max().z + (1-k)*bbox.min().z;
                 float newx = cos_theta*x + sin_theta*z;
                 float newz = -sin_theta*x + cos_theta*z;
-                vec3 tester(newx, y, newz);
+                glm::vec3 tester(newx, y, newz);
                 for ( int c = 0; c < 3; c++ )
                 {
                     if ( tester[c] > max[c] )

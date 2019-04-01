@@ -1,5 +1,7 @@
 #pragma once
 
+#include "glm/glm/geometric.hpp"
+
 #include "materials/material.h"
 #include "object.h"
 
@@ -7,29 +9,29 @@ class sphere : public object
 {
 public:
     sphere() {}
-    sphere(const vec3& cen, const float r, material* pMat) : center(cen), radius(r), pMaterial(pMat){};
+    sphere(const glm::vec3& cen, const float r, material* pMat) : center(cen), radius(r), pMaterial(pMat){};
     inline bool hit(const ray& r, const float t_min, const float t_max, hit_record& rec) const override;
     inline bool bounding_box(const float t0, const float t1, aabb& box) const override;
-    static inline void get_sphere_uv(const vec3& p, float& u, float& v)
+    static inline void get_sphere_uv(const glm::vec3& p, float& u, float& v)
     {
-        float phi = atan2(p.z(), p.x());
-        float theta = asin(p.y());
+        float phi = atan2(p.z, p.x);
+        float theta = asin(p.y);
         u = 1 - (phi + math::PI) / (2 * math::PI);
         v = (theta + math::PI / 2) / math::PI;
     }
 
 private:
-    vec3 center;
+    glm::vec3 center;
     float radius;
     material* pMaterial;
 };
 
 bool sphere::hit(const ray& r, const float t_min, const float t_max, hit_record& rec) const
 {
-    vec3 oc = r.origin() - center;
-    float a = dot(r.direction(), r.direction());
-    float b = dot(oc, r.direction());
-    float c = dot(oc, oc) - radius * radius;
+    glm::vec3 oc = r.origin() - center;
+    float a = glm::dot<3, float, glm::qualifier::lowp>(r.direction(), r.direction());
+    float b = glm::dot<3, float, glm::qualifier::lowp>(oc, r.direction());
+    float c = glm::dot<3, float, glm::qualifier::lowp>(oc, oc) - radius * radius;
     float discriminant = b * b - a * c;
     if (discriminant > 0)
     {
@@ -59,6 +61,6 @@ bool sphere::hit(const ray& r, const float t_min, const float t_max, hit_record&
 
 bool sphere::bounding_box(const float t0, const float t1, aabb& box) const
 {
-    box = aabb(center - vec3(radius, radius, radius), center + vec3(radius, radius, radius));
+    box = aabb(center - glm::vec3(radius, radius, radius), center + glm::vec3(radius, radius, radius));
     return true;
 }

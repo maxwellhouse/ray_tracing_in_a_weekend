@@ -18,7 +18,6 @@ add_executable( raytracer
     
     math/math.h
     math/ray.h
-    math/vec3.h
     math/perlin_noise.h
     
     objects/flip_normals.h

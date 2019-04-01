@@ -1,16 +1,18 @@
 #pragma once
 
+#include "glm/glm/geometric.hpp"
+
 #include "material.h"
 
-vec3 reflect(const vec3& v1, const vec3& v2)
+glm::vec3 reflect(const glm::vec3& v1, const glm::vec3& v2)
 {
-    return v1 - 2 * dot(v1, v2) * v2;
+    return v1 - 2 * glm::dot<3, float, glm::qualifier::lowp>(v1, v2) * v2;
 }
 
 class metal : public material
 {
 public:
-    metal(const vec3& v, const float f) : albedo(v)
+    metal(const glm::vec3& v, const float f) : albedo(v)
     {
         if (f < 1.0f)
             fuzz = f;
@@ -18,15 +20,16 @@ public:
             fuzz = 1;
     }
 
-    bool scatter(const ray& ray_in, const hit_record& rec, vec3& attenuation, ray& scatter) const override
+    bool scatter(const ray& ray_in, const hit_record& rec, glm::vec3& attenuation, ray& scatter) const override
     {
-        vec3 reflected = reflect(make_unit_vector(ray_in.direction()), rec.normal);
+        glm::vec3 reflected = reflect(glm::normalize(ray_in.direction()), rec.normal);
         scatter = ray(rec.p, reflected + fuzz * random_in_unit_sphere(), ray_in.time());
         attenuation = albedo;
-        return (dot(scatter.direction(), rec.normal) > 0);
+        
+        return (glm::dot<3, float, glm::qualifier::lowp>(scatter.direction(), rec.normal) > 0);
     }
 
 private:
-    vec3 albedo;
+    glm::vec3 albedo;
     float fuzz;
 };

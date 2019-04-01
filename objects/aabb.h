@@ -1,4 +1,7 @@
 #pragma once
+
+#include "glm/glm/vec3.hpp"
+
 #include <vector>
 
 inline float ffmin(float a, float b)
@@ -15,15 +18,15 @@ class aabb
 {
 public:
     aabb() {}
-    aabb(const vec3& min, const vec3& max) : minVec(min), maxVec(max) {}
-    vec3 max() const { return maxVec; }
-    vec3 min() const { return minVec; }
+    aabb(const glm::vec3& min, const glm::vec3& max) : minVec(min), maxVec(max) {}
+    glm::vec3 max() const { return maxVec; }
+    glm::vec3 min() const { return minVec; }
 
     inline bool hit(const ray& r, float tMin, float tMax) const;
 
 private:
-    vec3 minVec;
-    vec3 maxVec;
+    glm::vec3 minVec;
+    glm::vec3 maxVec;
 };
 
 inline bool aabb::hit(const ray& r, float tMin, float tMax) const
@@ -50,7 +53,7 @@ inline bool aabb::hit(const ray& r, float tMin, float tMax) const
 
 inline aabb surrounding_box(const aabb& box1, const aabb& box2)
 {
-    vec3 small(ffmin(box1.min().x(), box2.min().x()), ffmin(box1.min().y(), box2.min().y()), ffmin(box1.min().z(), box2.min().z()));
-    vec3 big(ffmax(box1.min().x(), box2.min().x()), ffmax(box1.min().y(), box2.min().y()), ffmax(box1.min().z(), box2.min().z()));
+    glm::vec3 small(ffmin(box1.min().x, box2.min().x), ffmin(box1.min().y, box2.min().y), ffmin(box1.min().z, box2.min().z));
+    glm::vec3 big(ffmax(box1.min().x, box2.min().x), ffmax(box1.min().y, box2.min().y), ffmax(box1.min().z, box2.min().z));
     return aabb(big, small);
 }

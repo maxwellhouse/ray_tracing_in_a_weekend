@@ -6,7 +6,7 @@ class image_texture : public texture
 public:
     image_texture() {}
     image_texture(unsigned char* pixels, int width, int height) : data(pixels), nx(width), ny(height) {}
-    inline vec3 value(float u, float v, const vec3& p) const override;
+    inline glm::vec3 value(float u, float v, const glm::vec3& p) const override;
 
 private:
     unsigned char* data;
@@ -14,7 +14,7 @@ private:
     int ny;
 };
 
-vec3 image_texture::value(float u, float v, const vec3& p) const
+glm::vec3 image_texture::value(float u, float v, const glm::vec3& p) const
 {
     int i = (u)*nx;
     int j = (1 - v) * ny - 0.001;
@@ -29,5 +29,5 @@ vec3 image_texture::value(float u, float v, const vec3& p) const
     float r = int(data[3 * i + 3 * nx * j]) / 255.0;
     float g = int(data[3 * i + 3 * nx * j + 1]) / 255.0;
     float b = int(data[3 * i + 3 * nx * j + 2]) / 255.0;
-    return vec3(r, g, b);
+    return glm::vec3(r, g, b);
 }

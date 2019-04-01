@@ -29,7 +29,7 @@ inline int box_x_compare(const void* a, const void* b)
     {
         std::cerr << "No bounding box in bvh node constructor.\n";
     }
-    if (box_left.min().x() - box_right.min().x() < 0.0f)
+    if (box_left.min().x - box_right.min().x < 0.0f)
     {
         return -1;
     }
@@ -49,7 +49,7 @@ inline int box_y_compare(const void* a, const void* b)
     {
         std::cerr << "No bounding box in bvh node constructor.\n";
     }
-    if (box_left.min().y() - box_right.min().y() < 0.0f)
+    if (box_left.min().y - box_right.min().y < 0.0f)
     {
         return -1;
     }
@@ -69,7 +69,7 @@ inline int box_z_compare(const void* a, const void* b)
     {
         std::cerr << "No bounding box in bvh node constructor.\n";
     }
-    if (box_left.min().z() - box_right.min().z() < 0.0f)
+    if (box_left.min().z - box_right.min().z < 0.0f)
     {
         return -1;
     }

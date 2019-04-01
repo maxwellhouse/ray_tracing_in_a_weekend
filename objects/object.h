@@ -1,7 +1,8 @@
 #pragma once
 
+#include "glm/glm/vec3.hpp"
+
 #include "math/ray.h"
-#include "math/vec3.h"
 #include "aabb.h"
 
 class material;
@@ -11,8 +12,8 @@ struct hit_record
     float t;
     float u;
     float v;
-    vec3 p;
-    vec3 normal;
+    glm::vec3 p;
+    glm::vec3 normal;
     material* pMaterial;
 };
 
