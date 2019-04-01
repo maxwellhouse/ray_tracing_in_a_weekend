@@ -17,6 +17,9 @@
 #include "objects/rectangle.h"
 #include "objects/sphere.h"
 #include "objects/flip_normals.h"
+#include "objects/box.h"
+#include "objects/rotate.h"
+#include "objects/translate.h"
 #include "textures/checker_texture.h"
 #include "textures/constant_texture.h"
 #include "textures/image_texture.h"
@@ -180,7 +183,7 @@ object* make_simple_light()
 
 object* make_cornell_box()
 {
-    int num_objects = 6;
+    int num_objects = 8;
     auto pList = new object*[num_objects];
     material* pRed = new Lambertian(new constant_texture(vec3(0.65f, 0.05f, 0.05f)));
     material* pWhite = new Lambertian(new constant_texture(vec3(0.73f, 0.73f, 0.73f)));
@@ -193,6 +196,8 @@ object* make_cornell_box()
     pList[3] = new flip_normals(new xz_rectangle(0.0f, 555.0f, 0.0f, 555.0f, 555.0f, pWhite));
     pList[4] = new xz_rectangle(0.0f, 555.0f, 0.0f, 555.0f, 0.0f, pWhite);
     pList[5] = new flip_normals(new xy_rectangle(0.0f, 555.0f, 0.0f, 555.0f, 555.0f, pWhite));
+    pList[6] = new translate(new rotate(new box(vec3(0.0f, 0.0f, 0.0f), vec3(165.0f, 165.0f, 165.0f), pWhite), 0.0f, -18.0f, 0.0f), vec3(130.0f, 0.0f, 65.0f));
+    pList[7] = new translate(new rotate(new box(vec3(0.0f, 0.0f, 0.0f), vec3(165.0f, 330.0f, 165.0f), pWhite), 0.0f, 15.0f, 0.0f), vec3(265.0f, 0.0f, 295.0f));
 
     return new object_list(pList, num_objects);
 }

@@ -29,6 +29,9 @@ add_executable( raytracer
     objects/object.h
     objects/object_list.h
     objects/sphere.h
+    objects/box.h
+    objects/translate.h
+    objects/rotate.h
     
 	textures/image_texture.h
     textures/noise_texture.h
