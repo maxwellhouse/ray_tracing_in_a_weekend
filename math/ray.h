@@ -1,4 +1,7 @@
 #pragma once
+
+#define GLM_FORCE_SSE2
+#define GLM_FORCE_ALIGNED
 #include "glm/glm/vec3.hpp"
 
 class ray

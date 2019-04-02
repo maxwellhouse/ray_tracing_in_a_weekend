@@ -3,9 +3,10 @@
 #define STB_IMAGE_IMPLEMENTATION
 #include "stb/stb_image.h"
 
-#ifdef DEBUG
+#define GLM_ENABLE_EXPERIMENTAL
+#define GLM_FORCE_SSE2
+#define GLM_FORCE_ALIGNED
 #define GLM_FORCE_MESSAGES
-#endif
 #include "glm/glm/vec3.hpp"
 
 #include "camera.h"
@@ -233,7 +234,7 @@ int main()
     float aperture = 0.0f;
     float fov = 40.0f;
 
-    camera cam(lookfrom, lookat, glm::vec3(0, 1, 0), fov, float(width) / float(height), aperture, dist_to_focus, 0.0, 1.0);
+    camera cam(lookfrom, lookat, glm::vec3(0, 1, 0), fov, float(width) / float(height), aperture, dist_to_focus, 0.0f, 1.0f);
 
     std::chrono::steady_clock::time_point t1 = std::chrono::steady_clock::now();
     for (int j = height - 1; j >= 0; j--)

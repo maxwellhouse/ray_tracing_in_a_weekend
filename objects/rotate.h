@@ -1,5 +1,7 @@
 #pragma once
 
+#define GLM_FORCE_SSE2
+#define GLM_FORCE_ALIGNED
 #include "glm/glm/vec3.hpp"
 #include "glm/glm/gtx/rotate_vector.hpp"
 
@@ -55,7 +57,7 @@ void rotate::rotate_y(float angle)
 {
     float radians = (math::PI / 180.0f) * angle;
     float sin_theta = std::sin(radians);
-    float cos_theta = std::sin(radians);
+    float cos_theta = std::cos(radians);
     hasBox = pObject->bounding_box(0.0f, 1.0f, bbox);
     glm::vec3 min(std::numeric_limits<float>::max(), std::numeric_limits<float>::max(), std::numeric_limits<float>::max());
     glm::vec3 max(std::numeric_limits<float>::min(), std::numeric_limits<float>::min(), std::numeric_limits<float>::min());
