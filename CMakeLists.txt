@@ -15,6 +15,7 @@ add_executable( raytracer
     materials/lambertian.h
     materials/material.h
     materials/metal.h
+    materials/isotropic.h
     
     math/math.h
     math/ray.h

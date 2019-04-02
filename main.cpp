@@ -6,7 +6,7 @@
 #define GLM_ENABLE_EXPERIMENTAL
 #define GLM_FORCE_SSE2
 #define GLM_FORCE_ALIGNED
-#define GLM_FORCE_MESSAGES
+//#define GLM_FORCE_MESSAGES
 #include "glm/glm/vec3.hpp"
 
 #include "camera.h"
@@ -25,6 +25,7 @@
 #include "objects/box.h"
 #include "objects/rotate.h"
 #include "objects/translate.h"
+#include "objects/constant_medium.h"
 #include "textures/checker_texture.h"
 #include "textures/constant_texture.h"
 #include "textures/image_texture.h"
@@ -32,6 +33,9 @@
 
 #include <chrono>
 #include <iostream>
+#include <thread>
+#include <atomic>
+#include <future>
 
 glm::vec3 linear_interp_color(const ray& r, const object* obj, const int depth)
 {
@@ -201,45 +205,88 @@ object* make_cornell_box()
     pList[3] = new flip_normals(new xz_rectangle(0.0f, 555.0f, 0.0f, 555.0f, 555.0f, pWhite));
     pList[4] = new xz_rectangle(0.0f, 555.0f, 0.0f, 555.0f, 0.0f, pWhite);
     pList[5] = new flip_normals(new xy_rectangle(0.0f, 555.0f, 0.0f, 555.0f, 555.0f, pWhite));
-    pList[6] = new translate(new rotate(new box(glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(165.0f, 165.0f, 165.0f), pWhite), 0.0f, -18.0f, 0.0f), glm::vec3(130.0f, 0.0f, 65.0f));
-    pList[7] = new translate(new rotate(new box(glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(165.0f, 330.0f, 165.0f), pWhite), 0.0f, 15.0f, 0.0f), glm::vec3(265.0f, 0.0f, 295.0f));
+    pList[6] = new translate(new rotate(new box(glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(165.0f, 165.0f, 165.0f), pWhite), 0.0f, glm::radians(-18.0f), 0.0f), glm::vec3(130.0f, 0.0f, 65.0f));
+    pList[7] = new translate(new rotate(new box(glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(165.0f, 330.0f, 165.0f), pWhite), 0.0f, glm::radians(15.0f), 0.0f), glm::vec3(265.0f, 0.0f, 295.0f));
 
     return new object_list(pList, num_objects);
 }
 
-int main()
+object* make_cornell_smoke()
 {
-    const int width = 800;
-    const int height = 800;
-    const float num_samples = 100.0f;
-    int comp = 3;
-    std::vector<uint8_t> image;
-    const int bitsPerPixel = comp * (8 * sizeof(uint8_t));
-    int stride = width * bitsPerPixel; // bits per row
-    stride += 31;                      // round up to next 32-bit boundary
-    stride /= 32;                      // DWORDs per row
-    stride *= 4;                       // bytes per row
+    int num_objects = 8;
+    auto pList = new object*[num_objects];
+    material *red = new Lambertian( new constant_texture(glm::vec3(0.65, 0.05, 0.05)) );
+    material *white = new Lambertian( new constant_texture(glm::vec3(0.73, 0.73, 0.73)) );
+    material *green = new Lambertian( new constant_texture(glm::vec3(0.12, 0.45, 0.15)) );
+    material *light = new diffuse_light( new constant_texture(glm::vec3(7, 7, 7)) );
+    pList[0] = new flip_normals(new yz_rectangle(0, 555, 0, 555, 555, green));
+    pList[1] = new yz_rectangle(0, 555, 0, 555, 0, red);
+    pList[2] = new xz_rectangle(113, 443, 127, 432, 554, light);
+    pList[3] = new flip_normals(new xz_rectangle(0, 555, 0, 555, 555, white));
+    pList[4] = new xz_rectangle(0, 555, 0, 555, 0, white);
+    pList[5] = new flip_normals(new xy_rectangle(0, 555, 0, 555, 555, white));
+    object *b1 = new translate(new rotate(new box(glm::vec3(0, 0, 0), glm::vec3(165, 165, 165), white), 0.0f, glm::radians(-18.0f), 0.0f), glm::vec3(130,0,65));
+    object *b2 = new translate(new rotate(new box(glm::vec3(0, 0, 0), glm::vec3(165, 330, 165), white), 0.0f, glm::radians(15.0f), 0.0f), glm::vec3(265,0,295));
+    pList[6] = new constant_medium(b1, 0.01, new constant_texture(glm::vec3(1.0, 1.0, 1.0)));
+    pList[7] = new constant_medium(b2, 0.01, new constant_texture(glm::vec3(0.0, 0.0, 0.0)));
+    
+    return new object_list(pList, num_objects);
+}
 
-    //object* obj_list = make_test_world();
-    //object* obj_list = make_random_world();
-    //object* obj_list = make_textured_sphere();
-    //object* obj_list = make_simple_light();
-    object* obj_list = make_cornell_box();
+object* make_final() {
+    int nb = 20;
+    object **list = new object*[30];
+    object **boxlist = new object*[10000];
+    object **boxlist2 = new object*[10000];
+    material *white = new Lambertian( new constant_texture(glm::vec3(0.73, 0.73, 0.73)) );
+    material *ground = new Lambertian( new constant_texture(glm::vec3(0.48, 0.83, 0.53)) );
+    int b = 0;
+    for (int i = 0; i < nb; i++) {
+        for (int j = 0; j < nb; j++) {
+            float w = 100;
+            float x0 = -1000 + i*w;
+            float z0 = -1000 + j*w;
+            float y0 = 0;
+            float x1 = x0 + w;
+            float y1 = 100*(math::rand()+0.01f);
+            float z1 = z0 + w;
+            boxlist[b++] = new box(glm::vec3(x0,y0,z0), glm::vec3(x1,y1,z1), ground);
+        }
+    }
+    int l = 0;
+    list[l++] = new bvh_node(boxlist, b, 0, 1);
+    material *light = new diffuse_light( new constant_texture(glm::vec3(7, 7, 7)) );
+    list[l++] = new xz_rectangle(123, 423, 147, 412, 554, light);
+    glm::vec3 center(400, 400, 200);
+    list[l++] = new moving_sphere(center, center+glm::vec3(30, 0, 0), 0, 1, 50, new Lambertian(new constant_texture(glm::vec3(0.7, 0.3, 0.1))));
+    list[l++] = new sphere(glm::vec3(260, 150, 45), 50, new dielectric(1.5));
+    list[l++] = new sphere(glm::vec3(0, 150, 145), 50, new metal(glm::vec3(0.8, 0.8, 0.9), 10.0));
+    object *boundary = new sphere(glm::vec3(360, 150, 145), 70, new dielectric(1.5));
+    list[l++] = boundary;
+    list[l++] = new constant_medium(boundary, 0.2, new constant_texture(glm::vec3(0.2, 0.4, 0.9)));
+    boundary = new sphere(glm::vec3(0, 0, 0), 5000, new dielectric(1.5));
+    list[l++] = new constant_medium(boundary, 0.0001, new constant_texture(glm::vec3(1.0, 1.0, 1.0)));
+    int nx, ny, nn;
+    unsigned char* tex_data =
+        stbi_load("E:/Projects/ray_tracing_in_a_weekend/physical_earth_satellite_image_mural_lg.jpg", &nx, &ny, &nn, 0);
+    material *emat =  new Lambertian(new image_texture(tex_data, nx, ny));
+    list[l++] = new sphere(glm::vec3(400,200, 400), 100, emat);
+    texture *pertext = new noise_texture(true, 0.1f);
+    list[l++] =  new sphere(glm::vec3(220,280, 300), 80, new Lambertian( pertext ));
+    int ns = 1000;
+    for (int j = 0; j < ns; j++) 
+    {
+        boxlist2[j] = new sphere(glm::vec3(165*math::rand(), 165*math::rand(), 165*math::rand()), 10, white);
+    }
+    list[l++] =   new translate(new rotate(new bvh_node(boxlist2,ns, 0.0, 1.0), 0.0f, 15.0f, 0.0f), glm::vec3(-100,270,395));
+    
+    return new object_list(list, l);
+}
 
-    //vec3 lookfrom(0.0f, 2.0f, 10.0f);
-    //vec3 lookat(0.0f, 0.0f, 0.0f);
-    glm::vec3 lookfrom(278.0f, 278.0f, -800.0f);
-    glm::vec3 lookat(278.0f, 278.0f, 0.0f);
-    float dist_to_focus = 10.0f;
-    float aperture = 0.0f;
-    float fov = 40.0f;
-
-    camera cam(lookfrom, lookat, glm::vec3(0, 1, 0), fov, float(width) / float(height), aperture, dist_to_focus, 0.0f, 1.0f);
-
-    std::chrono::steady_clock::time_point t1 = std::chrono::steady_clock::now();
+void create_image_synchronous(const int height, const int width, const int num_samples, const object* obj_list, camera& cam, std::vector<uint8_t>& image)
+{
     for (int j = height - 1; j >= 0; j--)
     {
-        std::cout << j << std::endl;
         for (int i = 0; i < width; i++)
         {
             glm::vec3 color(0.0f, 0.0f, 0.0f);
@@ -261,6 +308,98 @@ int main()
             image.push_back(ib);
         }
     }
+}
+
+void create_image_asynchronous(const int height, const int width, const int num_samples, const object* obj_list, camera& cam, std::vector<uint8_t>& image)
+{
+    const int max = width*height;
+    std::size_t cores = std::thread::hardware_concurrency();
+    volatile std::atomic<std::size_t> count(0);
+    std::vector<std::future<void>> future_vector;
+    auto pPixels = new glm::vec3[max];
+    while (cores--)
+    {
+        future_vector.push_back(
+            std::async([=, &pPixels, &count, &cam]()
+            {
+                while (true)
+                {
+                    std::size_t index = count++;
+                    if (index >= max)
+                        break;
+                    std::size_t x = index % width;
+                    std::size_t y = index / width;
+
+                    glm::vec3 color(0.0f, 0.0f, 0.0f);
+                    for (int s = 0; s < num_samples; s++)
+                    {
+                        float u = float(x + math::rand()) / float(width);
+                        float v = float(y + math::rand()) / float(height);
+                        ray r = cam.get_ray(u, v);
+
+                        color += linear_interp_color(r, obj_list, 0);
+                    }
+                    color /= num_samples;
+                    color = glm::vec3(std::sqrt(color[0]), std::sqrt(color[1]), std::sqrt(color[2]));
+
+                    pPixels[index] = color;
+                }
+            }));
+    }
+    for(auto & future : future_vector)
+    {
+        future.get();
+    }
+    for(int i = max-1; i != 0; i--)
+    {
+        glm::vec3 color = pPixels[i];
+        auto ir = uint8_t(255.99f * color.r);
+        auto ig = uint8_t(255.99f * color.g);
+        auto ib = uint8_t(255.99f * color.b);
+        image.push_back(ir);
+        image.push_back(ig);
+        image.push_back(ib);
+    }
+}
+
+int main()
+{
+    const int width = 800;
+    const int height = 800;
+    const float num_samples = 100.0f;
+
+    int comp = 3;
+    std::vector<uint8_t> image;
+    const int bitsPerPixel = comp * (8 * sizeof(uint8_t));
+    int stride = width * bitsPerPixel; // bits per row
+    stride += 31;                      // round up to next 32-bit boundary
+    stride /= 32;                      // DWORDs per row
+    stride *= 4;                       // bytes per row
+
+    //object* obj_list = make_two_spheres();
+    //object* obj_list = make_test_world();
+    //object* obj_list = make_random_world();
+    //object* obj_list = make_textured_sphere();
+    //object* obj_list = make_simple_light();
+    //object* obj_list = make_cornell_box();
+    //object* obj_list = make_cornell_smoke();
+    object* obj_list = make_final();
+
+    //vec3 lookfrom(0.0f, 2.0f, 10.0f);
+    //vec3 lookat(0.0f, 0.0f, 0.0f);
+    glm::vec3 lookfrom(278.0f, 278.0f, -800.0f);
+    glm::vec3 lookat(278.0f, 278.0f, 0.0f);
+    float dist_to_focus = 10.0f;
+    float aperture = 0.0f;
+    float fov = 40.0f;
+
+    camera cam(lookfrom, lookat, glm::vec3(0, 1, 0), fov, float(width) / float(height), aperture, dist_to_focus, 0.0f, 1.0f);
+
+    std::chrono::steady_clock::time_point t1 = std::chrono::steady_clock::now();
+
+    //create_image_synchronous(height, width, num_samples, obj_list, cam, image);
+    create_image_asynchronous(height, width, num_samples, obj_list, cam, image);
+
     std::chrono::steady_clock::time_point t2 = std::chrono::steady_clock::now();
     std::chrono::duration<double> time_span = std::chrono::duration_cast<std::chrono::duration<double>>(t2 - t1);
     std::cout << time_span.count() << " seconds.";
