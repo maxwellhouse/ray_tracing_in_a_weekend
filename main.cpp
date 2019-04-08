@@ -313,7 +313,7 @@ void create_image_synchronous(const int height, const int width, const int num_s
 void create_image_asynchronous(const int height, const int width, const int num_samples, const object* obj_list, camera& cam, std::vector<uint8_t>& image)
 {
     const int max = width*height;
-    std::size_t cores = std::thread::hardware_concurrency();
+    std::size_t cores = std::thread::hardware_concurrency() / 2;
     volatile std::atomic<std::size_t> count(0);
     std::vector<std::future<void>> future_vector;
     auto pPixels = new glm::vec3[max];
@@ -328,7 +328,7 @@ void create_image_asynchronous(const int height, const int width, const int num_
                     if (index >= max)
                         break;
                     std::size_t x = index % width;
-                    std::size_t y = index / width;
+                    std::size_t y = index / height;
 
                     glm::vec3 color(0.0f, 0.0f, 0.0f);
                     for (int s = 0; s < num_samples; s++)
@@ -350,7 +350,13 @@ void create_image_asynchronous(const int height, const int width, const int num_
     {
         future.get();
     }
-    for(int i = max-1; i != 0; i--)
+    // Mirror
+    for(int y = 0; y < height; y++)
+    for(int x = 0; x < width; x++)
+    {
+        pPixels[x][y] = pPixels[width-x][y];
+    }
+    for(int i = 0; i < max; i++)
     {
         glm::vec3 color = pPixels[i];
         auto ir = uint8_t(255.99f * color.r);
@@ -381,9 +387,9 @@ int main()
     //object* obj_list = make_random_world();
     //object* obj_list = make_textured_sphere();
     //object* obj_list = make_simple_light();
-    //object* obj_list = make_cornell_box();
+    object* obj_list = make_cornell_box();
     //object* obj_list = make_cornell_smoke();
-    object* obj_list = make_final();
+    //object* obj_list = make_final();
 
     //vec3 lookfrom(0.0f, 2.0f, 10.0f);
     //vec3 lookat(0.0f, 0.0f, 0.0f);
