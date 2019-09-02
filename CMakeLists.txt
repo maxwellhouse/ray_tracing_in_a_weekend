@@ -42,7 +42,7 @@ add_executable( raytracer
 
 target_include_directories(raytracer
     PRIVATE
-        ./thirdparty/
+        ${PROJECT_SOURCE_DIR}/external
 )
 
 if(LINUX)
