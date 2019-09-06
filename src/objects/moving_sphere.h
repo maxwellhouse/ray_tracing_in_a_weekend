@@ -30,10 +30,10 @@ glm::vec3 moving_sphere::centerAtTime(float time) const
 
 bool moving_sphere::bounding_box(const float t0, const float t1, aabb& box) const
 {
-    glm::vec3 center0 = centerAtTime(t0);
-    glm::vec3 center1 = centerAtTime(t1);
-    aabb box0(center0 - glm::vec3(radius, radius, radius), center0 - glm::vec3(radius, radius, radius));
-    aabb box1(center1 - glm::vec3(radius, radius, radius), center1 - glm::vec3(radius, radius, radius));
+    glm::vec3 center0AtTime = centerAtTime(t0);
+    glm::vec3 center1AtTime = centerAtTime(t1);
+    aabb box0(center0AtTime - glm::vec3(radius, radius, radius), center0AtTime - glm::vec3(radius, radius, radius));
+    aabb box1(center1AtTime - glm::vec3(radius, radius, radius), center1AtTime - glm::vec3(radius, radius, radius));
 
     box = surrounding_box(box0, box1);
 

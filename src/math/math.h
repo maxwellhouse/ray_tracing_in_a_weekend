@@ -154,6 +154,11 @@ float fastFloatSin(int Angle)
     return (fastFloatCos(Angle - 90));
 }
 
+float fastFloatSin(float Angle)
+{
+    return (fastFloatCos(static_cast<int>(Angle) - 90));
+}
+
 template <class T>
 T clamp(const T& value, const T& lowerLimit, const T& upperLimit)
 {

@@ -16,7 +16,7 @@ class isotropic : public material
 
 bool isotropic::scatter(const ray& ray_in, const hit_record& rec, glm::vec3& attenuation, ray& scatter) const 
 {
-    scatter = ray(rec.p, random_in_unit_sphere());
+    scatter = ray(rec.p, random_in_unit_sphere(), ray_in.time());
     attenuation = pAlbedo->value(rec.u, rec.v, rec.p);
     return true;
 }

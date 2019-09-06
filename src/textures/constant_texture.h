@@ -13,7 +13,7 @@ private:
     glm::vec3 color;
 };
 
-glm::vec3 constant_texture::value(float u, float v, const glm::vec3& p) const
+glm::vec3 constant_texture::value(float, float, const glm::vec3&) const
 {
     return color;
 }

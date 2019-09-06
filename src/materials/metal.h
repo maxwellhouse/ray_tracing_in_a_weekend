@@ -1,6 +1,7 @@
 #pragma once
-
-#include "glm/glm/geometric.hpp"
+#pragma warning(push, 0)
+#include <glm/geometric.hpp>
+#pragma warning(pop)
 
 #include "material.h"
 

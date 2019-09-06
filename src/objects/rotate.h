@@ -2,8 +2,10 @@
 
 #define GLM_FORCE_SSE2
 #define GLM_FORCE_ALIGNED
-#include "glm/glm/vec3.hpp"
-#include "glm/glm/gtx/rotate_vector.hpp"
+#pragma warning(push, 0)
+#include <glm/vec3.hpp>
+#include <glm/gtx/rotate_vector.hpp>
+#pragma warning(pop)
 
 #include "object.h"
 #include "math/math.h"
@@ -60,7 +62,7 @@ bool rotate::hit(const ray& r, const float t_min, const float t_max, hit_record&
     return hit;
 }
 
-bool rotate::bounding_box(const float t0, const float t1, aabb& box) const
+bool rotate::bounding_box(const float, const float, aabb& box) const
 {
     box = bbox;
     return true;

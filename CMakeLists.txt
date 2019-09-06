@@ -1,54 +1,59 @@
 cmake_minimum_required(VERSION 3.13)
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11")
-set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
+project(raytracer VERSION 1.0.0 LANGUAGES CXX)
 
-project("raytracer")
+set(SFML_DIR "./external/sfml/build")
+find_package(SFML 2.5 COMPONENTS graphics window system REQUIRED)
 
-set(CMAKE_INCLUDE_CURRENT_DIR ON)
+find_package(glm 0.9.9 COMPONENTS glm REQUIRED)
 
 add_executable( raytracer
-    main.cpp
-    camera.h
-    
-    materials/dielectric.h
-	materials/diffuse_light.h
-    materials/lambertian.h
-    materials/material.h
-    materials/metal.h
-    materials/isotropic.h
-    
-    math/math.h
-    math/ray.h
-    math/perlin_noise.h
-    
-    objects/flip_normals.h
-	objects/rectangle.h
-    objects/aabb.h
-    objects/bvh_node.h
-    objects/moving_sphere.h
-    objects/object.h
-    objects/object_list.h
-    objects/sphere.h
-    objects/box.h
-    objects/translate.h
-    objects/rotate.h
-    
-	textures/image_texture.h
-    textures/noise_texture.h
-    textures/checker_texture.h
-    textures/constant_texture.h
-    textures/texture.h
-)
+        src/main.cpp
+        src/camera.h
+
+        src/materials/dielectric.h
+        src/materials/diffuse_light.h
+        src/materials/lambertian.h
+        src/materials/material.h
+        src/materials/metal.h
+        src/materials/isotropic.h
+
+        src/math/math.h
+        src/math/ray.h
+        src/math/perlin_noise.h
+
+        src/objects/flip_normals.h
+        src/objects/rectangle.h
+        src/objects/aabb.h
+        src/objects/bvh_node.h
+        src/objects/moving_sphere.h
+        src/objects/object.h
+        src/objects/object_list.h
+        src/objects/sphere.h
+        src/objects/box.h
+        src/objects/translate.h
+        src/objects/rotate.h
+
+        src/textures/image_texture.h
+        src/textures/noise_texture.h
+        src/textures/checker_texture.h
+        src/textures/constant_texture.h
+        src/textures/texture.h
+        )
 
 target_include_directories(raytracer
-    PRIVATE
-        ${PROJECT_SOURCE_DIR}/external
-)
+        PRIVATE
+        ${CMAKE_CURRENT_SOURCE_DIR}/src
+        ${CMAKE_CURRENT_SOURCE_DIR}/external/stb
+        )
+
+target_compile_features(raytracer PRIVATE cxx_std_11)
+target_compile_options(raytracer PRIVATE -W4)
 
 if(LINUX)
-    target_link_libraries(raytracer m dl)
+        target_compile_options(raytracer PRIVATE -Werror)
+        target_link_libraries(raytracer m dl sfml-graphics sfml-window sfml-system glm)
 endif (LINUX)
 if(MSVC)
-    SET(CMAKE_CXX_FLAGS "/EHsc")
-    target_link_libraries(raytracer)
+        target_compile_options(raytracer PRIVATE -WX)
+        target_link_libraries(raytracer sfml-graphics sfml-window sfml-system glm)
 endif (MSVC)

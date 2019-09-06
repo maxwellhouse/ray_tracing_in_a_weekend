@@ -15,7 +15,7 @@ private:
     float scale;
 };
 
-glm::vec3 noise_texture::value(float u, float v, const glm::vec3& p) const
+glm::vec3 noise_texture::value(float, float, const glm::vec3& p) const
 {
     if (interpolate)
     {

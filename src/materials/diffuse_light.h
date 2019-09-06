@@ -14,7 +14,7 @@ private:
     texture* pEmit;
 };
 
-bool diffuse_light::scatter(const ray& ray_in, const hit_record& rec, glm::vec3& attenuation, ray& scatter) const
+bool diffuse_light::scatter(const ray&, const hit_record&, glm::vec3&, ray&) const
 {
     return false;
 }

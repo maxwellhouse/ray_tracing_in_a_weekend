@@ -121,7 +121,7 @@ inline bvh_node::bvh_node(object** obj_list, const int n, const float t0, const 
     }
 }
 
-bool bvh_node::bounding_box(const float t0, const float t1, aabb& b) const
+bool bvh_node::bounding_box(const float, const float, aabb& b) const
 {
     b = box;
     return true;

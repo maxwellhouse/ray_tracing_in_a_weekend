@@ -40,7 +40,7 @@ bool box::hit(const ray& r, const float t_min, const float t_max, hit_record& re
     return pList->hit(r, t_min, t_max, rec);
 }
 
-bool box::bounding_box(const float t0, const float t1, aabb& box) const
+bool box::bounding_box(const float, const float, aabb& box) const
 {
     box = aabb(pMin, pMax);
     return true;

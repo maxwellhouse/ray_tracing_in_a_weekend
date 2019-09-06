@@ -1,6 +1,8 @@
 #pragma once
 
-#include "glm/glm/geometric.hpp"
+#pragma warning(push, 0)
+#include <glm/geometric.hpp>
+#pragma warning(pop)
 
 #include "materials/material.h"
 #include "object.h"
@@ -59,7 +61,7 @@ bool sphere::hit(const ray& r, const float t_min, const float t_max, hit_record&
     return false;
 }
 
-bool sphere::bounding_box(const float t0, const float t1, aabb& box) const
+bool sphere::bounding_box(const float, const float, aabb& box) const
 {
     box = aabb(center - glm::vec3(radius, radius, radius), center + glm::vec3(radius, radius, radius));
     return true;

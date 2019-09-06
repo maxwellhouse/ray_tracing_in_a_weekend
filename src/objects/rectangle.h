@@ -46,7 +46,7 @@ bool xy_rectangle::hit(const ray& r, const float t_min, const float t_max, hit_r
     return true;
 }
 
-inline bool xy_rectangle::bounding_box(const float t0, const float t1, aabb& box) const
+inline bool xy_rectangle::bounding_box(const float, const float, aabb& box) const
 {
     box = aabb(glm::vec3(x0, y0, k - 0.001f), glm::vec3(x1, y1, k + 0.001f));
     return true;
@@ -96,7 +96,7 @@ bool xz_rectangle::hit(const ray& r, const float t_min, const float t_max, hit_r
     return true;
 }
 
-bool xz_rectangle::bounding_box(const float t0, const float t1, aabb& box) const
+bool xz_rectangle::bounding_box(const float, const float, aabb& box) const
 {
     box = aabb(glm::vec3(x0, k - 0.0001f, z0), glm::vec3(x1, k + 0.0001f, z1));
     return true;
@@ -146,7 +146,7 @@ bool yz_rectangle::hit(const ray& r, const float t_min, const float t_max, hit_r
     return true;
 }
 
-bool yz_rectangle::bounding_box(const float t0, const float t1, aabb& box) const
+bool yz_rectangle::bounding_box(const float, const float, aabb& box) const
 {
     box = aabb(glm::vec3(k - 0.0001f, y0, z0), glm::vec3(k + 0.0001f, y1, z1));
     return true;

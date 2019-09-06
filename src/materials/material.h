@@ -18,5 +18,5 @@ class material
 {
 public:
     virtual bool scatter(const ray& ray_in, const hit_record& rec, glm::vec3& attenuation, ray& scatter) const = 0;
-    virtual glm::vec3 emitted(float u, float v, const glm::vec3& p) const { return glm::vec3(0.0f, 0.0f, 0.0f); }
+    virtual glm::vec3 emitted(float , float , const glm::vec3& ) const { return glm::vec3(0.0f, 0.0f, 0.0f); }
 };

@@ -2,7 +2,9 @@
 
 #define GLM_FORCE_SSE2
 #define GLM_FORCE_ALIGNED
-#include "glm/glm/vec3.hpp"
+#pragma warning(push, 0)
+#include <glm/vec3.hpp>
+#pragma warning(pop)
 
 class ray
 {
@@ -17,7 +19,7 @@ public:
 
     inline glm::vec3 origin() const { return A; }
     inline glm::vec3 direction() const { return B; }
-    inline glm::vec3 point_at_parameter(const float t) const { return A + t * B; }
+    inline glm::vec3 point_at_parameter(const float time) const { return A + time * B; }
     inline float time() const { return t; }
 
 private:

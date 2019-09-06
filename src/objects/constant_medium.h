@@ -30,7 +30,7 @@ bool constant_medium::hit(const ray& r, const float t_min, const float t_max, hi
     hit_record rec1, rec2;
     if (pBoundary->hit(r, -FLT_MAX, FLT_MAX, rec1)) 
     { 
-        if (pBoundary->hit(r, rec1.t+0.0001, FLT_MAX, rec2)) 
+        if (pBoundary->hit(r, rec1.t+0.0001f, FLT_MAX, rec2)) 
         {
             if (db) std::cerr << "\nt0 t1 " << rec1.t << " " << rec2.t << "\n";
             if (rec1.t < t_min)
