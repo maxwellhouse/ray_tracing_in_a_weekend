@@ -57,3 +57,10 @@ if(MSVC)
         target_compile_options(raytracer PRIVATE -WX)
         target_link_libraries(raytracer sfml-graphics sfml-window sfml-system glm)
 endif (MSVC)
+
+add_custom_command(TARGET raytracer POST_BUILD
+        COMMAND ${CMAKE_COMMAND} -E copy_if_different
+        "${PROJECT_SOURCE_DIR}/external/sfml/build/lib/$<CONFIGURATION>/sfml-system-d-2.dll"
+        "${PROJECT_SOURCE_DIR}/external/sfml/build/lib/$<CONFIGURATION>/sfml-graphics-d-2.dll"
+        "${PROJECT_SOURCE_DIR}/external/sfml/build/lib/$<CONFIGURATION>/sfml-window-d-2.dll"
+        $<TARGET_FILE_DIR:raytracer>)

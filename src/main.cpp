@@ -8,6 +8,10 @@
 #define GLM_FORCE_ALIGNED
 //#define GLM_FORCE_MESSAGES
 #include <glm/vec3.hpp>
+#include <sfml/Window/Event.hpp>
+#include <sfml/Graphics/RenderWindow.hpp>
+#include <sfml/Graphics/Color.hpp>
+#include <sfml/Graphics/Vertex.hpp>
 #pragma warning(pop)
 
 #include "camera.h"
@@ -37,6 +41,11 @@
 #include <thread>
 #include <atomic>
 #include <future>
+
+sf::Color toSFMLColor(const glm::vec3& color)
+{
+    return sf::Color(uint8_t(255.99f * color.r), uint8_t(255.99f * color.g), uint8_t(255.99f * color.b));
+}
 
 glm::vec3 linear_interp_color(const ray& r, const object* obj, const int depth)
 {
@@ -80,30 +89,30 @@ object* make_random_world()
                     if (math::random_number() % 2)
                     {
                         pList[i++] = new sphere(
-                            center,
-                            0.2f,
-                            new Lambertian(new constant_texture(
-                                glm::vec3(math::rand() * math::rand(), math::rand() * math::rand(), math::rand() * math::rand()))));
+                                center,
+                                0.2f,
+                                new Lambertian(new constant_texture(
+                                        glm::vec3(math::rand() * math::rand(), math::rand() * math::rand(), math::rand() * math::rand()))));
                     }
                     else
                     {
                         pList[i++] = new moving_sphere(
-                            center,
-                            center + glm::vec3(0.0f, 0.5f * math::rand(), 0.0f),
-                            0.0f,
-                            1.0f,
-                            0.2f,
-                            new Lambertian(new constant_texture(
-                                glm::vec3(math::rand() * math::rand(), math::rand() * math::rand(), math::rand() * math::rand()))));
+                                center,
+                                center + glm::vec3(0.0f, 0.5f * math::rand(), 0.0f),
+                                0.0f,
+                                1.0f,
+                                0.2f,
+                                new Lambertian(new constant_texture(
+                                        glm::vec3(math::rand() * math::rand(), math::rand() * math::rand(), math::rand() * math::rand()))));
                     }
                 }
                 else if (choose_material < 0.95f)
                 { // metal
                     pList[i++] = new sphere(
-                        center,
-                        0.2f,
-                        new metal(
-                            glm::vec3(0.5f * (1 + math::rand()), 0.5f * (1 + math::rand()), 0.5f * (1 + math::rand())), 0.5f * math::rand()));
+                            center,
+                            0.2f,
+                            new metal(
+                                glm::vec3(0.5f * (1 + math::rand()), 0.5f * (1 + math::rand()), 0.5f * (1 + math::rand())), 0.5f * math::rand()));
                 }
                 else
                 { // glass
@@ -124,12 +133,12 @@ object* make_test_world()
     pList[2] = new sphere(glm::vec3(4.0f, 1.0f, 0.0f), 1.0f, new metal(glm::vec3(0.7f, 0.6f, 0.5f), 0.0f));
     glm::vec3 center(0.0f, -4.0f, 0.0f);
     pList[3] = new moving_sphere(
-        center,
-        center + glm::vec3(0.0f, 0.5f * math::rand(), 0.0f),
-        0.0f,
-        0.75f,
-        1.0f,
-        new Lambertian(new constant_texture(glm::vec3(math::rand() * math::rand(), math::rand() * math::rand(), math::rand() * math::rand()))));
+            center,
+            center + glm::vec3(0.0f, 0.5f * math::rand(), 0.0f),
+            0.0f,
+            0.75f,
+            1.0f,
+            new Lambertian(new constant_texture(glm::vec3(math::rand() * math::rand(), math::rand() * math::rand(), math::rand() * math::rand()))));
 
     auto pBlack = new constant_texture(glm::vec3(0.0f, 0.0f, 0.0f));
     auto pWhite = new constant_texture(glm::vec3(1.0f, 1.0f, 1.0f));
@@ -199,7 +208,7 @@ object* make_cornell_box()
     material* pWhite = new Lambertian(new constant_texture(glm::vec3(0.73f, 0.73f, 0.73f)));
     material* pGreen = new Lambertian(new constant_texture(glm::vec3(0.12f, 0.45f, 0.15f)));
     material* pLight = new diffuse_light(new constant_texture(glm::vec3(15.0f, 15.0f, 15.0f)));
-    
+
     pList[0] = new flip_normals(new yz_rectangle(0.0f, 555.0f, 0.0f, 555.0f, 555.0f, pGreen));
     pList[1] = new yz_rectangle(0.0f, 555.0f, 0.0f, 555.0f, 0.0f, pRed);
     pList[2] = new xz_rectangle(213.0f, 343.0f, 227.0f, 332.0f, 554.0f, pLight);
@@ -230,7 +239,7 @@ object* make_cornell_smoke()
     object *b2 = new translate(new rotate(new box(glm::vec3(0, 0, 0), glm::vec3(165, 330, 165), white), 0.0f, glm::radians(15.0f), 0.0f), glm::vec3(265,0,295));
     pList[6] = new constant_medium(b1, 0.01f, new constant_texture(glm::vec3(1.0, 1.0, 1.0)));
     pList[7] = new constant_medium(b2, 0.01f, new constant_texture(glm::vec3(0.0, 0.0, 0.0)));
-    
+
     return new object_list(pList, num_objects);
 }
 
@@ -280,13 +289,14 @@ object* make_final() {
         boxlist2[j] = new sphere(glm::vec3(165*math::rand(), 165*math::rand(), 165*math::rand()), 10, white);
     }
     list[l++] =   new translate(new rotate(new bvh_node(boxlist2,ns, 0.0, 1.0), 0.0f, 15.0f, 0.0f), glm::vec3(-100,270,395));
-    
+
     return new object_list(list, l);
 }
 
-void create_image_synchronous(const int height, const int width, const int num_samples, const object* obj_list, camera& cam, std::vector<uint8_t>& image)
+void create_image_synchronous(const int height, const int width, const int num_samples, const object* obj_list, camera& cam, std::vector<uint8_t>& image, sf::RenderWindow* pWindow)
 {
-    for (int j = height - 1; j >= 0; j--)
+    pWindow->clear(sf::Color::Black);
+    for (int j = 0; j < height; j++)
     {
         for (int i = 0; i < width; i++)
         {
@@ -307,45 +317,57 @@ void create_image_synchronous(const int height, const int width, const int num_s
             image.push_back(ir);
             image.push_back(ig);
             image.push_back(ib);
+
+            sf::Event event;
+            while (pWindow->pollEvent(event))
+            {
+                if (event.type == sf::Event::Closed)
+                    pWindow->close();
+            }
+            auto vert = sf::Vertex(sf::Vector2f(static_cast<float>(i),static_cast<float>(j)), sf::Color(ir, ig, ib), sf::Vector2f(0,0));
+            pWindow->draw(&vert, 1, sf::Points);
+            pWindow->display();
         }
     }
 }
 
-void create_image_asynchronous(const int height, const int width, const int num_samples, const object* obj_list, camera& cam, std::vector<uint8_t>& image)
+void create_image_asynchronous(const int height, const int width, const int num_samples, const object* obj_list, camera& cam, std::vector<uint8_t>& image, sf::RenderWindow* pWindow)
 {
     const int max = width*height;
-    std::size_t cores = std::thread::hardware_concurrency() / 2;
-    volatile std::atomic<std::size_t> count(0);
+    int cores = std::thread::hardware_concurrency() / 2;
+    volatile std::atomic<int> count(0);
     std::vector<std::future<void>> future_vector;
     auto pPixels = new glm::vec3[max];
     while (cores--)
     {
         future_vector.push_back(
-            std::async([=, &pPixels, &count, &cam]()
-            {
-                while (true)
-                {
-                    std::size_t index = count++;
-                    if (index >= max)
-                        break;
-                    std::size_t x = index % width;
-                    std::size_t y = index / height;
-
-                    glm::vec3 color(0.0f, 0.0f, 0.0f);
-                    for (int s = 0; s < num_samples; s++)
+                std::async([=, &pPixels, &count, &cam]()
                     {
-                        float u = float(x + math::rand()) / float(width);
-                        float v = float(y + math::rand()) / float(height);
-                        ray r = cam.get_ray(u, v);
+                        while (true)
+                        {
+                            int index = count++;
+                            if (index >= max)
+                                break;
+                            int x = index % width;
+                            int y = index / height;
 
-                        color += linear_interp_color(r, obj_list, 0);
-                    }
-                    color /= num_samples;
-                    color = glm::vec3(std::sqrt(color[0]), std::sqrt(color[1]), std::sqrt(color[2]));
+                            glm::vec3 color(0.0f, 0.0f, 0.0f);
+                            for (int s = 0; s < num_samples; s++)
+                            {
+                                float u = float(x + math::rand()) / float(width);
+                                float v = float(y + math::rand()) / float(height);
+                                ray r = cam.get_ray(u, v);
+                                color += linear_interp_color(r, obj_list, 0);
+                            }
+                            color /= num_samples;
+                            color = glm::vec3(std::sqrt(color[0]), std::sqrt(color[1]), std::sqrt(color[2]));
 
-                    pPixels[index] = color;
-                }
-            }));
+                            pPixels[index] = color;
+                            auto vert = sf::Vertex(sf::Vector2f(static_cast<float>(x),static_cast<float>(y)), toSFMLColor(color), sf::Vector2f(0,0));
+                            pWindow->draw(&vert, 1, sf::Points);
+                            pWindow->display();
+                        }
+                    }));
     }
     for(auto & future : future_vector)
     {
@@ -353,10 +375,10 @@ void create_image_asynchronous(const int height, const int width, const int num_
     }
     // Mirror
     for(int y = 0; y < height; y++)
-    for(int x = 0; x < width; x++)
-    {
-        pPixels[x][y] = pPixels[width-x][y];
-    }
+        for(int x = 0; x < width; x++) 
+        {
+            pPixels[x][y] = pPixels[width-x][y];
+        }
     for(int i = 0; i < max; i++)
     {
         glm::vec3 color = pPixels[i];
@@ -402,10 +424,14 @@ int main()
 
     camera cam(lookfrom, lookat, glm::vec3(0, 1, 0), fov, float(width) / float(height), aperture, dist_to_focus, 0.0f, 1.0f);
 
+    sf::RenderWindow window;
+    window.create(sf::VideoMode(width, height), "ray_tracer");
+//    window.setActive(false);
+
     std::chrono::steady_clock::time_point t1 = std::chrono::steady_clock::now();
 
-    //create_image_synchronous(height, width, num_samples, obj_list, cam, image);
-    create_image_asynchronous(height, width, num_samples, obj_list, cam, image);
+    create_image_synchronous(height, width, num_samples, obj_list, cam, image, &window);
+    //create_image_asynchronous(height, width, num_samples, obj_list, cam, image, &window);
 
     std::chrono::steady_clock::time_point t2 = std::chrono::steady_clock::now();
     std::chrono::duration<double> time_span = std::chrono::duration_cast<std::chrono::duration<double>>(t2 - t1);
